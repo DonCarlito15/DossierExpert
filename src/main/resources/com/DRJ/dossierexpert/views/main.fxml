@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane style="-fx-background-color: #f0f4f8;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.iisga.dossierexpert.controller.MainController">
+
+    <!-- ============================================================ -->
+    <!-- TOP : BARRE DE TITRE                                         -->
+    <!-- ============================================================ -->
+    <top>
+        <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0" style="-fx-background-color: #2C3E50; -fx-padding: 10 15 10 15;">
+            <Text fx:id="dateLabel" style="-fx-fill: #ecf0f1; -fx-font-size: 13px;" text="Date de jour : 16/07/2026">
+            <font>
+               <Font name="System Bold" size="12.0" />
+            </font></Text>
+            <Text style="-fx-fill: #7f8c8d; -fx-font-size: 16px;" text="|" />
+            <Text style="-fx-fill: white; -fx-font-weight: bold; -fx-font-size: 18px;" text="Aymen Mallah 👤" />
+            <Region HBox.hgrow="ALWAYS" />
+        </HBox>
+    </top>
+
+    <!-- ============================================================ -->
+    <!-- CENTER : SPLIT PANE (TABLEAU + FORMULAIRE)                   -->
+    <!-- ============================================================ -->
+    <center>
+        <SplitPane dividerPositions="0.5" style="-fx-padding: 10; -fx-background-color: transparent;">
+
+            <!-- ========================================================== -->
+            <!-- PARTIE GAUCHE : TABLEAU                                    -->
+            <!-- ========================================================== -->
+            <VBox nodeOrientation="RIGHT_TO_LEFT" spacing="10.0">
+                <padding>
+                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                </padding>
+
+                <!-- Barre de recherche -->
+                <HBox alignment="CENTER_RIGHT" nodeOrientation="RIGHT_TO_LEFT" spacing="10.0">
+                    <TextField fx:id="searchField" onKeyReleased="#handleSearch" promptText="بحث..." style="-fx-background-color: white; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 10 6 10; -fx-font-size: 13px;" HBox.hgrow="ALWAYS" />
+                    <Button onAction="#handleSearch" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 15 6 15; -fx-cursor: hand;" text="Rechercher" />
+                    <Button onAction="#handleResetSearch" style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 10 6 10; -fx-cursor: hand;" text="🔄" />
+                </HBox>
+
+                <!-- Tableau -->
+                <TableView fx:id="dossierTable" nodeOrientation="RIGHT_TO_LEFT" style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #ecf0f1; -fx-border-radius: 8;" VBox.vgrow="ALWAYS">
+
+                    <columns>
+                        <TableColumn fx:id="numDossierColumn" prefWidth="120" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="ملف م.ق رقم " />
+                        <TableColumn fx:id="numMessagerieColumn" prefWidth="110" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="رقم المراسلة بكتابة الضبط" />
+                        <TableColumn fx:id="sourceColumn" prefWidth="110" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="المصدر" />
+                        <TableColumn fx:id="avocatColumn" prefWidth="110" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="المحامي" />
+                        <TableColumn fx:id="interetColumn" prefWidth="90" style="-fx-font-weight: bold; -fx-alignment: CENTER_LEFT;" text="الفائدة" />
+                        <TableColumn fx:id="montantColumn" prefWidth="100" style="-fx-font-weight: bold; -fx-alignment: CENTER_LEFT;" text="المبلغ" />
+                        <TableColumn fx:id="statutColumn" prefWidth="90" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="ملف عدد" />
+                        <TableColumn fx:id="dateColumn" prefWidth="100" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="حكم أو قرار عدد" />
+                  <TableColumn fx:id="dateColumn1" prefWidth="100" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="التاريخ المقرر" />
+                  <TableColumn fx:id="dateColumn2" prefWidth="100" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="مراجع المراسلة" />
+                  <TableColumn fx:id="dateColumn3" prefWidth="100" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="حالة المراسلة " />
+                    </columns>
+
+                    <placeholder>
+                        <VBox alignment="CENTER" nodeOrientation="RIGHT_TO_LEFT" spacing="8.0" style="-fx-padding: 40 0 40 0;">
+                            <Text style="-fx-font-size: 48px;" text="📂" />
+                            <Text style="-fx-font-size: 16px; -fx-fill: #95a5a6;" text="لا توجد ملفات مسجلة" />
+                            <Text style="-fx-font-size: 12px; -fx-fill: #bdc3c7;" text="أضف ملفاً جديداً عبر النموذج على اليمين" />
+                        </VBox>
+                    </placeholder>
+                </TableView>
+
+                <!-- Compteur en bas du tableau -->
+                <HBox alignment="CENTER_LEFT" nodeOrientation="RIGHT_TO_LEFT" spacing="5.0">
+                    <Text fx:id="countLabel" style="-fx-font-size: 12px; -fx-fill: #7f8c8d; -fx-font-weight: bold;" text="عدد الملفات : 0" />
+                </HBox>
+            </VBox>
+
+            <!-- ========================================================== -->
+            <!-- PARTIE DROITE : FORMULAIRE                                  -->
+            <!-- ========================================================== -->
+            <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent; -fx-padding: 5;">
+
+                <VBox nodeOrientation="RIGHT_TO_LEFT" spacing="8.0" style="-fx-padding: 10 10 15 10; -fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #ecf0f1; -fx-border-radius: 8;">
+
+                    <!-- Titre du formulaire -->
+                    <Label style="-fx-font-weight: bold; -fx-font-size: 15px; -fx-text-fill: #2c3e50;" text="📝 معلومات الملف" />
+
+                    <!-- Séparateur -->
+                    <HBox style="-fx-border-color: #ecf0f1; -fx-border-width: 0 0 1 0; -fx-padding: 0 0 5 0;" />
+
+                    <!-- Numéro dossier -->
+                    <VBox spacing="2.0">
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="ملف م.ق رقم :" />
+                        <TextField fx:id="numDossierField" promptText="رقم الملف" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 8 6 8; -fx-font-size: 12px;" />
+                    </VBox>
+
+                    <!-- Numéro messagerie -->
+                    <VBox spacing="2.0">
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="رقم المراسلة بكتابة الضبط :">
+                            <font>
+                                <Font size="5.0" />
+                            </font>
+                        </Label>
+                        <TextField fx:id="numMessagerieField" promptText="رقم المراسلة" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 8 6 8; -fx-font-size: 12px;" />
+                    </VBox>
+
+                    <!-- Source -->
+                    <VBox spacing="2.0">
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="المصدر :" />
+                        <TextField fx:id="sourceField" promptText="المصدر" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 8 6 8; -fx-font-size: 12px;" />
+                    </VBox>
+
+                    <!-- Avocat -->
+                    <VBox spacing="2.0">
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="المحامي :" />
+                        <TextField fx:id="avocatField" promptText="المحامي" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 8 6 8; -fx-font-size: 12px;" />
+                    </VBox>
+
+                    <!-- Intérêt -->
+                    <VBox spacing="2.0">
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="الفائدة :" />
+                        <TextField fx:id="interetField" promptText="قيمة الفائدة" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 8 6 8; -fx-font-size: 12px;" />
+                    </VBox>
+
+                    <!-- Montant -->
+                    <VBox spacing="2.0">
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="المبلغ :" />
+                        <TextField fx:id="montantField" promptText="المبلغ" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 8 6 8; -fx-font-size: 12px;" />
+                    </VBox>
+
+                    <!-- Références messagerie -->
+                    <VBox spacing="2.0">
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="ملف عدد :" />
+                        <TextField fx:id="referencesField" promptText="مرجع المراسلة" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 8 6 8; -fx-font-size: 12px;" />
+                    </VBox>
+
+                    <!-- Décision -->
+                    <VBox spacing="2.0">
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="حكم أو قرار عدد :" />
+                        <TextField fx:id="decisionField" promptText="القرار" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 8 6 8; -fx-font-size: 12px;" />
+                    </VBox>
+
+                    <!-- Date -->
+                    <VBox spacing="2.0">
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="التاريخ المقرر :" />
+                        <TextField fx:id="dateField" promptText="YYYY-MM-DD" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 8 6 8; -fx-font-size: 12px;" />
+                    </VBox>
+
+                    <!-- Statut -->
+                    <VBox spacing="2.0">
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="مراجع المراسلة :" />
+                        <TextField fx:id="statutField" promptText="مراجع المراسلة" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 8 6 8; -fx-font-size: 12px;" />
+                    </VBox>
+
+                    <!-- État dossier (ComboBox) -->
+                    <VBox spacing="2.0">
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="حالة المراسلة :" />
+                        <ComboBox fx:id="etatComboBox" promptText="اختر الحالة" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 4 8 4 8; -fx-font-size: 12px;" />
+                    </VBox>
+
+                    <!-- Remarques -->
+                    <VBox spacing="2.0" VBox.vgrow="ALWAYS">
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="الملاحظات :" />
+                        <TextArea fx:id="remarquesField" prefHeight="80" promptText="ملاحظات..." style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 8 6 8; -fx-font-size: 12px;" />
+                    </VBox>
+
+                    <!-- Boutons : Enregistrer + Imprimer -->
+                    <HBox nodeOrientation="RIGHT_TO_LEFT" spacing="10.0" style="-fx-padding: 8 0 0 0;">
+                        <Button onAction="#handleSave" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 8 20 8 20; -fx-font-size: 13px; -fx-cursor: hand;" text="Enregistrer" />
+                        <Button onAction="#handlePrint" style="-fx-background-color: #2980b9; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 8 20 8 20; -fx-font-size: 13px; -fx-cursor: hand;" text="Imprimer" />
+                    </HBox>
+
+                </VBox>
+            </ScrollPane>
+        </SplitPane>
+    </center>
+
+    <!-- ============================================================ -->
+    <!-- BOTTOM : BARRE DE STATUT                                      -->
+    <!-- ============================================================ -->
+    <bottom>
+        <HBox nodeOrientation="RIGHT_TO_LEFT" spacing="12.0" style="-fx-background-color: #2C3E50; -fx-padding: 4 15 4 15;">
+            <Button onAction="#handleLogout" style="-fx-background-color: #c0392b; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 15 6 15; -fx-cursor: hand;" text="⏻">
+            <font>
+               <Font size="14.0" />
+            </font></Button>
+        </HBox>
+    </bottom>
+
+</BorderPane>
