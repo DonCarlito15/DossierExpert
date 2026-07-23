@@ -17,7 +17,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane style="-fx-background-color: #f0f4f8;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.iisga.dossierexpert.controller.MainController">
+<BorderPane style="-fx-background-color: #f0f4f8;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.DRJ.dossierexpert.controller.MainController">
 
     <!-- ============================================================ -->
     <!-- TOP : BARRE DE TITRE                                         -->
@@ -50,9 +50,8 @@
 
                 <!-- Barre de recherche -->
                 <HBox alignment="CENTER_RIGHT" nodeOrientation="RIGHT_TO_LEFT" spacing="10.0">
-                    <TextField fx:id="searchField" onKeyReleased="#handleSearch" promptText="بحث..." style="-fx-background-color: white; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 10 6 10; -fx-font-size: 13px;" HBox.hgrow="ALWAYS" />
-                    <Button onAction="#handleSearch" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 15 6 15; -fx-cursor: hand;" text="Rechercher" />
                     <Button onAction="#handleResetSearch" style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 10 6 10; -fx-cursor: hand;" text="🔄" />
+                    <Button onAction="#handleSearch" prefHeight="29.0" prefWidth="247.0" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 15 6 15; -fx-cursor: hand;" text="Rechercher" />
                 </HBox>
 
                 <!-- Tableau -->
@@ -106,6 +105,12 @@
                         <TextField fx:id="numDossierField" promptText="رقم الملف" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 8 6 8; -fx-font-size: 12px;" />
                     </VBox>
 
+                    <!-- Source -->
+                    <VBox spacing="2.0">
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="المصدر :" />
+                        <TextField fx:id="sourceField" promptText="المصدر" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 8 6 8; -fx-font-size: 12px;" />
+                    </VBox>
+
                     <!-- Numéro messagerie -->
                     <VBox spacing="2.0">
                         <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="رقم المراسلة بكتابة الضبط :">
@@ -114,12 +119,6 @@
                             </font>
                         </Label>
                         <TextField fx:id="numMessagerieField" promptText="رقم المراسلة" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 8 6 8; -fx-font-size: 12px;" />
-                    </VBox>
-
-                    <!-- Source -->
-                    <VBox spacing="2.0">
-                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="المصدر :" />
-                        <TextField fx:id="sourceField" promptText="المصدر" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 8 6 8; -fx-font-size: 12px;" />
                     </VBox>
 
                     <!-- Avocat -->
