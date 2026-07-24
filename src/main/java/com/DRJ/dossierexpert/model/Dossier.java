@@ -29,6 +29,7 @@ public class Dossier {
     private Long personneId; // ID de la personne associée
     private String nomPersonne; // Nom de la personne (pour affichage)
     private String prenomPersonne; // Prénom de la personne (pour affichage)
+    private String dossierNombre; // ملف عدد
     private boolean etatDossier; // true = actif, false = inactif
     private String createdAt;
     private String updatedAt;
@@ -249,6 +250,14 @@ public class Dossier {
             return prenomPersonne + " " + nomPersonne;
         }
         return "";
+    }
+
+    public String getDossierNombre() {
+        return dossierNombre;
+    }
+
+    public void setDossierNombre(String dossierNombre) {
+        this.dossierNombre = dossierNombre;
     }
 
     public boolean isEtatDossier() {

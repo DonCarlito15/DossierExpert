@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.DRJ.dossierexpert.controller.MainLayoutController">
+
+    <!-- ========== TOP BAR (INCLUSION) ========== -->
+    <top>
+        <fx:include source="../components/top-bar.fxml" fx:id="topBar" />
+    </top>
+
+    <!-- ========== CONTENU CENTRAL (DYNAMIQUE) ========== -->
+    <center>
+        <fx:include fx:id="pageContent" />
+    </center>
+
+    <!-- ========== BOTTOM BAR (INCLUSION) ========== -->
+    <bottom>
+        <fx:include source="../components/bottom-bar.fxml" fx:id="bottomBar" />
+    </bottom>
+
+</BorderPane>

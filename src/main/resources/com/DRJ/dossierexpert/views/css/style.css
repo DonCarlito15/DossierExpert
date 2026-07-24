@@ -1,6 +1,5 @@
 /* ============================================================
    STYLE.CSS - DossierExpert
-   Version corrigée - Compatible JavaFX
    ============================================================ */
 
 /* ==================== ROOT ==================== */
@@ -17,7 +16,6 @@
     -fx-border-width: 1.5;
     -fx-padding: 10 12 10 12;
     -fx-font-size: 14px;
-    -fx-font-family: "Segoe UI", Arial, sans-serif;
 }
 
 .text-field:focused, .password-field:focused {
@@ -26,7 +24,6 @@
     -fx-effect: dropshadow(three-pass-box, rgba(44, 62, 80, 0.2), 5, 0, 0, 0);
 }
 
-/* Champ en erreur - Utiliser une classe CSS */
 .text-field-error, .password-field-error {
     -fx-border-color: #e74c3c;
     -fx-border-width: 2;
@@ -50,25 +47,30 @@
 
 .button:armed {
     -fx-background-color: #1a252f;
-    -fx-effect: dropshadow(three-pass-box, rgba(44, 62, 80, 0.2), 3, 0, 0, 0);
 }
 
-/* ==================== HYPERLIENS ==================== */
-.hyperlink {
-    -fx-text-fill: #3498db;
-    -fx-font-size: 12px;
-    -fx-border-color: transparent;
-    -fx-underline: false;
-    -fx-cursor: hand;
+.button-success {
+    -fx-background-color: #27ae60;
 }
 
-.hyperlink:hover {
-    -fx-text-fill: #2c3e50;
-    -fx-underline: true;
+.button-success:hover {
+    -fx-background-color: #2ecc71;
 }
 
-.hyperlink:visited {
-    -fx-text-fill: #8e44ad;
+.button-danger {
+    -fx-background-color: #c0392b;
+}
+
+.button-danger:hover {
+    -fx-background-color: #e74c3c;
+}
+
+.button-primary {
+    -fx-background-color: #2980b9;
+}
+
+.button-primary:hover {
+    -fx-background-color: #3498db;
 }
 
 /* ==================== LABELS ==================== */
@@ -84,121 +86,7 @@
     -fx-font-weight: normal;
 }
 
-/* ==================== SEPARATEUR ==================== */
-.separator .line {
-    -fx-border-color: #ecf0f1;
-    -fx-border-width: 1;
-}
-
-/* ==================== TEXT ==================== */
-.text-title {
-    -fx-font-size: 24px;
-    -fx-font-weight: bold;
-    -fx-fill: #2c3e50;
-}
-
-.text-subtitle {
-    -fx-font-size: 12px;
-    -fx-fill: #7f8c8d;
-}
-
-/* ==================== SCROLLBAR ==================== */
-.scroll-pane {
-    -fx-background-color: transparent;
-}
-
-.scroll-pane .viewport {
-    -fx-background-color: transparent;
-}
-
-/* ==================== TOOLTIP ==================== */
-.tooltip {
-    -fx-background-color: #2c3e50;
-    -fx-text-fill: white;
-    -fx-background-radius: 5;
-    -fx-padding: 8 12 8 12;
-    -fx-font-size: 12px;
-}
-
-/* ==================== MESSAGE D'ERREUR ==================== */
-.error-label {
-    -fx-text-fill: #e74c3c;
-    -fx-font-size: 12px;
-    -fx-font-weight: normal;
-    -fx-padding: 5 0 0 0;
-}
-
-/* ==================== BANNIÈRE ==================== */
-.banner {
-    -fx-background-color: #2c3e50;
-}
-
-.banner-text {
-    -fx-text-fill: rgba(255, 255, 255, 0.3);
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-}
-
-/* ==================== PANELS ==================== */
-.login-panel {
-    -fx-background-color: white;
-    -fx-background-radius: 15;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 10, 0, 0, 5);
-}
-
-.background-gradient {
-    -fx-background-color: linear-gradient(to bottom right, #f0f4f8, #d9e2ec);
-}
-
-/* ==================== PIED DE PAGE ==================== */
-.footer-text {
-    -fx-font-size: 11px;
-    -fx-fill: #95a5a6;
-}
-
-.footer-version {
-    -fx-font-size: 10px;
-    -fx-fill: #bdc3c7;
-}
-
-/* ==================== CHAMPS DE SAISIE - ETATS ==================== */
-.text-field:disabled, .password-field:disabled {
-    -fx-opacity: 0.6;
-}
-
-.text-field:readonly, .password-field:readonly {
-    -fx-background-color: #f8f9fa;
-}
-
-/* ==================== BOUTONS - VARIANTES ==================== */
-.button-success {
-    -fx-background-color: #27ae60;
-    -fx-text-fill: white;
-}
-
-.button-success:hover {
-    -fx-background-color: #2ecc71;
-}
-
-.button-danger {
-    -fx-background-color: #c0392b;
-    -fx-text-fill: white;
-}
-
-.button-danger:hover {
-    -fx-background-color: #e74c3c;
-}
-
-.button-warning {
-    -fx-background-color: #f39c12;
-    -fx-text-fill: white;
-}
-
-.button-warning:hover {
-    -fx-background-color: #f1c40f;
-}
-
-/* ==================== TABLES ==================== */
+/* ==================== TABLEAUX ==================== */
 .table-view {
     -fx-background-color: white;
     -fx-border-color: #ecf0f1;
@@ -248,117 +136,7 @@
     -fx-border-width: 2;
 }
 
-.combo-box .list-cell {
-    -fx-padding: 5 10 5 10;
-}
-
-.combo-box-popup .list-view .list-cell:hover {
-    -fx-background-color: #3498db;
-    -fx-text-fill: white;
-}
-
-/* ==================== DATE PICKER ==================== */
-.date-picker {
-    -fx-background-color: white;
-    -fx-border-color: #bdc3c7;
-    -fx-border-radius: 8;
-    -fx-background-radius: 8;
-}
-
-.date-picker:focused {
-    -fx-border-color: #2c3e50;
-    -fx-border-width: 2;
-}
-
-/* ==================== CHECKBOX ==================== */
-.check-box {
-    -fx-font-size: 13px;
-    -fx-text-fill: #34495e;
-}
-
-.check-box .box {
-    -fx-background-color: white;
-    -fx-border-color: #bdc3c7;
-    -fx-border-radius: 4;
-}
-
-.check-box:selected .box {
-    -fx-background-color: #2c3e50;
-    -fx-border-color: #2c3e50;
-}
-
-.check-box:selected .mark {
-    -fx-background-color: white;
-}
-
-/* ==================== RADIO BUTTON ==================== */
-.radio-button {
-    -fx-font-size: 13px;
-    -fx-text-fill: #34495e;
-}
-
-.radio-button .radio {
-    -fx-background-color: white;
-    -fx-border-color: #bdc3c7;
-    -fx-border-radius: 50%;
-}
-
-.radio-button:selected .radio {
-    -fx-background-color: #2c3e50;
-    -fx-border-color: #2c3e50;
-}
-
-.radio-button:selected .dot {
-    -fx-background-color: white;
-}
-
-/* ==================== TAB PANE ==================== */
-.tab-pane {
-    -fx-background-color: transparent;
-}
-
-.tab-pane .tab-header-area {
-    -fx-background-color: transparent;
-}
-
-.tab-pane .tab {
-    -fx-background-color: #ecf0f1;
-    -fx-padding: 8 20 8 20;
-    -fx-border-radius: 8 8 0 0;
-    -fx-background-radius: 8 8 0 0;
-}
-
-.tab-pane .tab:selected {
-    -fx-background-color: #2c3e50;
-}
-
-.tab-pane .tab:selected .tab-label {
-    -fx-text-fill: white;
-}
-
-.tab-pane .tab .tab-label {
-    -fx-text-fill: #34495e;
-    -fx-font-weight: bold;
-}
-
-/* ==================== PROGRESS BAR ==================== */
-.progress-bar {
-    -fx-accent: #2c3e50;
-    -fx-background-color: #ecf0f1;
-    -fx-background-radius: 10;
-}
-
-.progress-bar .track {
-    -fx-background-color: #ecf0f1;
-    -fx-background-radius: 10;
-}
-
-.progress-bar .bar {
-    -fx-background-color: #2c3e50;
-    -fx-background-radius: 10;
-}
-
-/* ==================== TEXT AREA ==================== */
+/* ==================== TEXTAREA ==================== */
 .text-area {
     -fx-background-color: white;
     -fx-border-color: #bdc3c7;
@@ -375,51 +153,7 @@
     -fx-background-color: white;
 }
 
-/* ==================== MENU BAR ==================== */
-.menu-bar {
-    -fx-background-color: #2c3e50;
-}
-
-.menu-bar .menu {
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-}
-
-.menu-bar .menu:hover {
-    -fx-background-color: #34495e;
-}
-
-.menu-bar .menu-item {
-    -fx-text-fill: #34495e;
-}
-
-.menu-bar .menu-item:hover {
-    -fx-background-color: #3498db;
-    -fx-text-fill: white;
-}
-
-/* ==================== DIALOG ==================== */
-.dialog-pane {
-    -fx-background-color: white;
-    -fx-border-color: #ecf0f1;
-    -fx-border-radius: 10;
-    -fx-background-radius: 10;
-}
-
-.dialog-pane .header-panel {
-    -fx-background-color: #2c3e50;
-    -fx-text-fill: white;
-}
-
-.dialog-pane .header-panel .label {
-    -fx-text-fill: white;
-}
-
-/* ==================== RESPONSIVE DESIGN ==================== */
-/* Note: JavaFX ne supporte pas @media queries directement */
-/* Utilisez des classes avec des bindings pour le responsive */
-
-/* ==================== SCROLL PANE ==================== */
+/* ==================== SCROLLPANE ==================== */
 .scroll-pane {
     -fx-background-color: transparent;
 }
@@ -428,19 +162,19 @@
     -fx-background-color: transparent;
 }
 
-.scroll-bar:horizontal .track,
-.scroll-bar:vertical .track {
-    -fx-background-color: #ecf0f1;
-    -fx-background-radius: 10;
+/* ==================== MESSAGES ==================== */
+.success-text {
+    -fx-fill: #27ae60;
 }
 
-.scroll-bar:horizontal .thumb,
-.scroll-bar:vertical .thumb {
-    -fx-background-color: #bdc3c7;
-    -fx-background-radius: 10;
+.error-text {
+    -fx-fill: #e74c3c;
 }
 
-.scroll-bar:horizontal .thumb:hover,
-.scroll-bar:vertical .thumb:hover {
-    -fx-background-color: #2c3e50;
+.warning-text {
+    -fx-fill: #f39c12;
+}
+
+.info-text {
+    -fx-fill: #3498db;
 }

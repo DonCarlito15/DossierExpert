@@ -43,9 +43,9 @@ public class DatabaseConnection {
     private Properties properties;
 
     // Paramètres de connexion par défaut
-    private static final String DEFAULT_URL = "jdbc:mysql://localhost:3306/dossierexpert";
-    private static final String DEFAULT_USERNAME = "dossierexpert_user";
-    private static final String DEFAULT_PASSWORD = "Dossier@2024#Secure";
+    private static final String DEFAULT_URL = "jdbc:mysql://localhost:3306/dossierexpert?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
+    private static final String DEFAULT_USERNAME = "root";
+    private static final String DEFAULT_PASSWORD = "";
     private static final String DEFAULT_DRIVER = "com.mysql.cj.jdbc.Driver";
 
     // ==================== CONFIGURATION ====================

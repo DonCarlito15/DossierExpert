@@ -23,15 +23,7 @@
     <!-- TOP : BARRE DE TITRE                                         -->
     <!-- ============================================================ -->
     <top>
-        <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0" style="-fx-background-color: #2C3E50; -fx-padding: 10 15 10 15;">
-            <Text fx:id="dateLabel" style="-fx-fill: #ecf0f1; -fx-font-size: 13px;" text="Date de jour : 16/07/2026">
-            <font>
-               <Font name="System Bold" size="12.0" />
-            </font></Text>
-            <Text style="-fx-fill: #7f8c8d; -fx-font-size: 16px;" text="|" />
-            <Text style="-fx-fill: white; -fx-font-weight: bold; -fx-font-size: 18px;" text="Aymen Mallah 👤" />
-            <Region HBox.hgrow="ALWAYS" />
-        </HBox>
+        <fx:include source="../components/top-bar.fxml" fx:id="topBar" />
     </top>
 
     <!-- ============================================================ -->
@@ -66,9 +58,9 @@
                         <TableColumn fx:id="montantColumn" prefWidth="100" style="-fx-font-weight: bold; -fx-alignment: CENTER_LEFT;" text="المبلغ" />
                         <TableColumn fx:id="statutColumn" prefWidth="90" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="ملف عدد" />
                         <TableColumn fx:id="dateColumn" prefWidth="100" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="حكم أو قرار عدد" />
-                  <TableColumn fx:id="dateColumn1" prefWidth="100" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="التاريخ المقرر" />
-                  <TableColumn fx:id="dateColumn2" prefWidth="100" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="مراجع المراسلة" />
-                  <TableColumn fx:id="dateColumn3" prefWidth="100" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="حالة المراسلة " />
+                        <TableColumn fx:id="dateColumn1" prefWidth="100" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="التاريخ المقرر" />
+                        <TableColumn fx:id="dateColumn2" prefWidth="100" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="مراجع المراسلة" />
+                        <TableColumn fx:id="dateColumn3" prefWidth="100" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="حالة المراسلة " />
                     </columns>
 
                     <placeholder>
@@ -190,12 +182,7 @@
     <!-- BOTTOM : BARRE DE STATUT                                      -->
     <!-- ============================================================ -->
     <bottom>
-        <HBox nodeOrientation="RIGHT_TO_LEFT" spacing="12.0" style="-fx-background-color: #2C3E50; -fx-padding: 4 15 4 15;">
-            <Button onAction="#handleLogout" style="-fx-background-color: #c0392b; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 15 6 15; -fx-cursor: hand;" text="⏻">
-            <font>
-               <Font size="14.0" />
-            </font></Button>
-        </HBox>
+        <fx:include source="../components/bottom-bar.fxml" fx:id="bottomBar" />
     </bottom>
 
 </BorderPane>
