@@ -205,13 +205,23 @@ public class Dossier {
         this.referencesMessagerie = referencesMessagerie;
     }
 
-    public String getStatut() {
-        return statut;
-    }
 
-    public void setStatut(String statut) {
+// ✅ Méthode pour afficher le statut en arabe
+
+
+   // Dans Dossier.java
+public void setStatut(String statut) {
+    // ✅ Convertir les valeurs arabes en valeurs ENUM
+    if ("جاهز".equals(statut)) {
+        this.statut = "prêt";
+    } else if ("غير جاهز".equals(statut)) {
+        this.statut = "Pas prêt";
+    } else if (statut != null) {
         this.statut = statut;
+    } else {
+        this.statut = "Pas prêt";
     }
+}
 
     public String getRemarques() {
         return remarques;
@@ -377,9 +387,18 @@ public class Dossier {
      *
      * @return "جاهز" ou "غير جاهز"
      */
-    public String getStatutArabe() {
-        return statut;
+    public String getStatut() {
+    return statut;
+}
+
+// ✅ Méthode pour afficher le statut en arabe
+public String getStatutArabe() {
+    if ("prêt".equals(statut)) {
+        return "جاهز";
+    } else {
+        return "غير جاهز";
     }
+}
 
     /**
      * Retourne le statut en français

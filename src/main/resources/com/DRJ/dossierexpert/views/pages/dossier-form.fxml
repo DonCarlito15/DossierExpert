@@ -1,103 +1,145 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane style="-fx-background-color: #e8ecf1;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.DRJ.dossierexpert.controller.PdfPreviewController">
+<BorderPane style="-fx-background-color: #e8ecf1;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.DRJ.dossierexpert.controller.DossierFormController">
 
     <!-- ============================================================ -->
-    <!-- TOP : BARRE DE TITRE                                         -->
+    <!-- TOP : TITRE                                                  -->
     <!-- ============================================================ -->
     <top>
         <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color: #2c3e50; -fx-padding: 10 15 10 15;">
-            <Text style="-fx-fill: white; -fx-font-weight: bold; -fx-font-size: 18px;" text="📄 معاينة الملف" />
-            <Text style="-fx-fill: #7f8c8d; -fx-font-size: 16px;" text="|" />
-            <Text fx:id="dossierNumberLabel" style="-fx-fill: #ecf0f1; -fx-font-size: 13px;" text="ملف رقم : D2024-001" />
+            <Text fx:id="formTitle" style="-fx-fill: white; -fx-font-weight: bold; -fx-font-size: 18px;" text="&#128221; إضافة ملف جديد" />
             <Region HBox.hgrow="ALWAYS" />
-            <Button onAction="#handleBack" style="-fx-background-color: #c0392b; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 15 6 15; -fx-cursor: hand;" text="🔙 رجوع" />
+            <Button onAction="#handleClose" style="-fx-background-color: #c0392b; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 15 6 15; -fx-cursor: hand;" text="&#10006; إغلاق" />
         </HBox>
     </top>
 
+    <!-- ============================================================ -->
+    <!-- CENTER : FORMULAIRE                                          -->
+    <!-- ============================================================ -->
     <center>
-        <ScrollPane fitToHeight="true" fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent; -fx-padding: 15;" BorderPane.alignment="CENTER">
+        <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent; -fx-padding: 15;">
 
-            <VBox alignment="TOP_CENTER" spacing="0.0" style="-fx-padding: 0;" VBox.vgrow="ALWAYS">
+            <VBox nodeOrientation="RIGHT_TO_LEFT" spacing="10.0" style="-fx-padding: 15; -fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #ecf0f1; -fx-border-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);">
 
-                <VBox alignment="CENTER" style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #dce1e8; -fx-border-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5); -fx-padding: 30 35 30 35;" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                <!-- Titre du formulaire -->
+                <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #2c3e50;" text="&#128221; معلومات الملف" />
 
-                    <!-- ========== LOGO CENTRÉ ========== -->
-                    <VBox alignment="CENTER" style="-fx-padding: 0 0 15 0;">
-                        <ImageView fitHeight="100.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../images/logo.png" />
-                            </image>
-                        </ImageView>
+                <!-- Separateur -->
+                <HBox style="-fx-border-color: #ecf0f1; -fx-border-width: 0 0 1 0; -fx-padding: 0 0 5 0;" />
+
+                <!-- ============================================ -->
+                <!-- ROW 1 : Numero dossier + Source              -->
+                <!-- ============================================ -->
+                <HBox nodeOrientation="RIGHT_TO_LEFT" spacing="15.0">
+                    <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="ملف م.ق رقم : *" />
+                        <TextField fx:id="numDossierField" promptText="رقم الملف" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 8; -fx-font-size: 13px;" />
                     </VBox>
+                    <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="المصدر : *" />
+                        <TextField fx:id="sourceField" promptText="المصدر" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 8; -fx-font-size: 13px;" />
+                    </VBox>
+                </HBox>
 
-                    <VBox alignment="CENTER" spacing="5.0" style="-fx-padding: 0 0 15 0; -fx-border-color: #ecf0f1; -fx-border-width: 0 0 2 0;" />
+                <!-- ============================================ -->
+                <!-- ROW 2 : Numero messagerie + Avocat           -->
+                <!-- ============================================ -->
+                <HBox nodeOrientation="RIGHT_TO_LEFT" spacing="15.0">
+                    <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="رقم المراسلة :" />
+                        <TextField fx:id="numMessagerieField" promptText="رقم المراسلة" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 8; -fx-font-size: 13px;" />
+                    </VBox>
+                    <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="المحامي : *" />
+                        <TextField fx:id="avocatField" promptText="المحامي" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 8; -fx-font-size: 13px;" />
+                    </VBox>
+                </HBox>
 
-                    <VBox alignment="CENTER" spacing="5.0" style="-fx-padding: 10 0 10 0;" />
+                <!-- ============================================ -->
+                <!-- ROW 3 : الفائدة + المبلغ                     -->
+                <!-- ============================================ -->
+                <HBox nodeOrientation="RIGHT_TO_LEFT" spacing="15.0">
+                    <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="الفائدة :" />
+                        <TextField fx:id="interetField" promptText="قيمة الفائدة" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 8; -fx-font-size: 13px;" />
+                    </VBox>
+                    <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="المبلغ :" />
+                        <TextField fx:id="montantField" promptText="المبلغ" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 8; -fx-font-size: 13px;" />
+                    </VBox>
+                </HBox>
 
-                    <VBox nodeOrientation="LEFT_TO_RIGHT" spacing="8.0" style="-fx-padding: 5 0 10 0;">
+                <!-- ============================================ -->
+                <!-- ROW 4 : ملف عدد + حكم أو قرار                -->
+                <!-- ============================================ -->
+                <HBox nodeOrientation="RIGHT_TO_LEFT" spacing="15.0">
+                    <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="ملف عدد :" />
+                        <TextField fx:id="referencesField" promptText="مرجع المراسلة" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 8; -fx-font-size: 13px;" />
+                    </VBox>
+                    <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="حكم أو قرار عدد :" />
+                        <TextField fx:id="decisionField" promptText="القرار" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 8; -fx-font-size: 13px;" />
+                    </VBox>
+                </HBox>
 
-                        <HBox alignment="CENTER_RIGHT" spacing="5.0" style="-fx-padding: 2 0 2 0;">
-                            <Text fx:id="previewNumDossier" style="-fx-font-size: 13px; -fx-fill: #2c3e50;" />
-                            <Text fill="#29517d" style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-fill: #29517d;" text="ملف م.ق رقم :" />
-                        </HBox>
+                <!-- ============================================ -->
+                <!-- ROW 5 : التاريخ + حالة المراسلة + statut     -->
+                <!-- ============================================ -->
+                <HBox nodeOrientation="RIGHT_TO_LEFT" spacing="15.0">
+                    <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="التاريخ المقرر :" />
+                        <TextField fx:id="dateField" promptText="YYYY-MM-DD" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 8; -fx-font-size: 13px;" />
+                    </VBox>
+                    <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="حالة المراسلة :" />
+                        <ComboBox fx:id="etatComboBox" promptText="اختر الحالة" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 4 8 4 8; -fx-font-size: 13px;" />
+                    </VBox>
+                    <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="مراجع المراسلة :" />
+                        <TextField fx:id="statutField" promptText="مراجع المراسلة" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 8; -fx-font-size: 13px;" />
+                    </VBox>
+                </HBox>
 
-                        <HBox alignment="CENTER_RIGHT" spacing="5.0" style="-fx-padding: 2 0 2 0;">
-                            <Text fx:id="previewNumMessagerie" style="-fx-font-size: 13px; -fx-fill: #2c3e50;" />
-                            <Text style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-fill: #29517d;" text="رقم المراسلة :" />
-                        </HBox>
+                <!-- ============================================ -->
+                <!-- REMARQUES                                    -->
+                <!-- ============================================ -->
+                <VBox spacing="3.0" VBox.vgrow="ALWAYS">
+                    <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="الملاحظات :" />
+                    <TextArea fx:id="remarquesField" prefHeight="100" promptText="ملاحظات..." style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 8; -fx-font-size: 13px;" />
+                </VBox>
 
-                        <HBox alignment="CENTER_RIGHT" spacing="5.0" style="-fx-padding: 2 0 2 0;">
-                            <Text fx:id="previewSource" style="-fx-font-size: 13px; -fx-fill: #2c3e50;" />
-                            <Text style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-fill: #29517d;" text="المصدر :" />
-                        </HBox>
+                <!-- ============================================ -->
+                <!-- STATUS LABEL + BUTTONS                       -->
+                <!-- ============================================ -->
+                <VBox spacing="8.0" style="-fx-padding: 8 0 0 0;">
+                    <!-- Status label for messages -->
+                    <Label fx:id="statusLabel" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="" visible="false" />
 
-                        <HBox alignment="CENTER_RIGHT" spacing="5.0" style="-fx-padding: 2 0 2 0;">
-                            <Text fx:id="previewAvocat" style="-fx-font-size: 13px; -fx-fill: #2c3e50;" />
-                            <Text style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-fill: #29517d;" text="المحامي :" />
-                        </HBox>
+                    <HBox nodeOrientation="RIGHT_TO_LEFT" spacing="10.0">
+                        <Button fx:id="saveButton" onAction="#handleSave" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 10 25 10 25; -fx-font-size: 14px; -fx-cursor: hand;" text="&#128190; حفظ" />
+                        <Button onAction="#handlePrint" style="-fx-background-color: #2980b9; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 10 25 10 25; -fx-font-size: 14px; -fx-cursor: hand;" text="&#128424; طباعة" />
+                        <Button onAction="#handleClear" style="-fx-background-color: #f39c12; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 10 25 10 25; -fx-font-size: 14px; -fx-cursor: hand;" text="&#128465; مسح" />
+                        <Button onAction="#handleCancel" style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 10 25 10 25; -fx-font-size: 14px; -fx-cursor: hand;" text="&#10060; إلغاء" />
+                    </HBox>
+                </VBox>
 
-                        <HBox alignment="CENTER_RIGHT" spacing="5.0" style="-fx-padding: 2 0 2 0;">
-                            <Text fx:id="previewInteret" style="-fx-font-size: 13px; -fx-fill: #2c3e50;" />
-                            <Text style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-fill: #29517d;" text="الفائدة :" />
-                        </HBox>
+            </VBox>
+        </ScrollPane>
+    </center>
 
-                        <HBox alignment="CENTER_RIGHT" spacing="5.0" style="-fx-padding: 2 0 2 0;">
-                            <Text fx:id="previewMontant" style="-fx-font-size: 13px; -fx-fill: #2c3e50;" />
-                            <Text style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-fill: #29517d;" text="المبلغ :" />
-                        </HBox>
+</BorderPane>
 
-                        <HBox alignment="CENTER_RIGHT" spacing="5.0" style="-fx-padding: 2 0 2 0;">
-                            <Text fx:id="previewReferences" style="-fx-font-size: 13px; -fx-fill: #2c3e50;" />
-                            <Text style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-fill: #29517d;" text="ملف عدد :" />
-                        </HBox>
-
-                        <HBox alignment="CENTER_RIGHT" spacing="5.0" style="-fx-padding: 2 0 2 0;">
-                            <Text fx:id="previewDecision" style="-fx-font-size: 13px; -fx-fill: #2c3e50;" />
-                            <Text style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-fill: #29517d;" text="حكم او قرار عدد :" />
-                        </HBox>
-
-                        <HBox alignment="CENTER_RIGHT" spacing="5.0" style="-fx-padding: 2 0 2 0;">
-                            <Text fx:id="previewDate" style="-fx-font-size: 13px; -fx-fill: #2c3e50;" />
-                            <Text style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-fill: #29517d;" text="التاريخ المقرر :" />
-                        </HBox>
-
-                        <HBox alignment="CENTER_RIGHT" spacing="5.0" style="-fx-padding: 2 0 2 0;">
-                            <Text fx:id="previewStatutDetail" style="-fx-font-size: 13px; -fx-fill: #2c3e50;" />
-                            <Text style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-fill: #29517d;" text="مراجع المراسلة :" />
-                        </HBox>
-
-                        <HBox alignment="CENTER_RIGHT" spacing="5.0" style="-fx-padding: 2 0 2 0;">
-                            <Text fx

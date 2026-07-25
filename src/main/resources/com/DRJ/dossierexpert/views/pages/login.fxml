@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane style="-fx-background-color: linear-gradient(to bottom right, #f0f4f8, #d9e2ec);" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.DRJ.dossierexpert.controller.LoginController">
+<BorderPane prefHeight="700.0" prefWidth="1000.0" style="-fx-background-color: linear-gradient(to bottom right, #f0f4f8, #d9e2ec);" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.DRJ.dossierexpert.controller.LoginController">
 
     <!-- ============================================================ -->
     <!-- CENTER : Formulaire de connexion                             -->
@@ -25,11 +25,13 @@
             <padding>
                 <Insets bottom="35.0" left="35.0" right="35.0" top="35.0" />
             </padding>
-         <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-            <image>
-               <Image url="@../assets/logo.png" />
-            </image>
-         </ImageView>
+            
+            <!-- ==================== LOGO ==================== -->
+            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                <image>
+                    <Image url="@../assets/logo1.png" />
+                </image>
+            </ImageView>
 
             <!-- ==================== SEPARATEUR ==================== -->
             <Separator style="-fx-background-color: #ecf0f1;" />
@@ -40,13 +42,13 @@
                 <!-- Champ Email -->
                 <VBox nodeOrientation="RIGHT_TO_LEFT" spacing="5.0">
                     <Label alignment="BASELINE_RIGHT" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #34495e;" text="البريد الإلكتروني / اسم المستخدم" />
-                    <TextField fx:id="usernameField" maxWidth="320.0" nodeOrientation="RIGHT_TO_LEFT" promptText="أدخل بريدك الإلكتروني" style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 10 12 10 12; -fx-font-size: 14px;" />
+                    <TextField fx:id="usernameField" maxWidth="320.0" nodeOrientation="LEFT_TO_RIGHT" promptText="أدخل بريدك الإلكتروني" style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 10 12 10 12; -fx-font-size: 14px;" />
                 </VBox>
 
                 <!-- Champ Mot de passe -->
                 <VBox nodeOrientation="RIGHT_TO_LEFT" spacing="5.0">
                     <Label alignment="BASELINE_RIGHT" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #34495e;" text="كلمة المرور" />
-                    <PasswordField fx:id="passwordField" maxWidth="320.0" nodeOrientation="RIGHT_TO_LEFT" promptText="أدخل كلمة المرور" style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 10 12 10 12; -fx-font-size: 14px;" />
+                    <PasswordField fx:id="passwordField" maxWidth="320.0" nodeOrientation="LEFT_TO_RIGHT" promptText="أدخل كلمة المرور" style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 10 12 10 12; -fx-font-size: 14px;" />
                 </VBox>
 
                 <!-- Lien Mot de passe oublié -->

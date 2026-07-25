@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.ScrollPane?>
@@ -20,11 +21,13 @@
     <!-- ============================================================ -->
     <top>
         <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color: #2c3e50; -fx-padding: 10 15 10 15;">
+            <Text style="-fx-fill: white; -fx-font-weight: bold; -fx-font-size: 18px;" text="🔍 Recherche avancée" />
             <Text style="-fx-fill: #7f8c8d; -fx-font-size: 16px;" text="|" />
-            <Text fx:id="dateLabel" style="-fx-fill: #ecf0f1; -fx-font-size: 13px;" text="Date de jour : 17/07/20226">
-            <font>
-               <Font name="System Bold" size="12.0" />
-            </font></Text>
+            <Text fx:id="dateLabel" style="-fx-fill: #ecf0f1; -fx-font-size: 13px;" text="Date : 24/07/2026">
+                <font>
+                    <Font name="System Bold" size="12.0" />
+                </font>
+            </Text>
             <Region HBox.hgrow="ALWAYS" />
             <Button onAction="#handleBack" style="-fx-background-color: #c0392b; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 15 6 15; -fx-cursor: hand;" text="🔙 رجوع" />
         </HBox>
@@ -41,38 +44,47 @@
             <!-- ========================================================== -->
             <HBox alignment="CENTER" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #ecf0f1; -fx-border-radius: 8; -fx-padding: 10 15 10 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 5, 0, 0, 2);">
 
+                <!-- 1. Liste déroulante (Critère de recherche) -->
                 <ComboBox fx:id="searchCriteriaCombo" prefHeight="13.0" prefWidth="137.0" promptText="Choisir critère" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 4 8 4 8; -fx-font-size: 13px; -fx-pref-width: 150px;" />
 
+                <!-- 2. Champ de recherche -->
                 <TextField fx:id="searchField" promptText="par ex : Num dossier / Avocat / Prix ..." style="-fx-background-color: #f8f9fa; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 10 6 10; -fx-font-size: 13px; -fx-pref-width: 250px;" />
 
-                <Button onAction="#handleFilter" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 20 6 20; -fx-font-size: 13px; -fx-cursor: hand;" text="Filtrer" />
+                <!-- 3. Bouton Filtrer -->
+                <Button onAction="#handleFilter" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 20 6 20; -fx-font-size: 13px; -fx-cursor: hand;" text="🔍 Filtrer" />
 
-                <Button onAction="#handleReset" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 15 6 15; -fx-font-size: 13px; -fx-cursor: hand;" text="Actualiser" />
+                <!-- 4. Bouton Réinitialiser -->
+                <Button onAction="#handleReset" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 15 6 15; -fx-font-size: 13px; -fx-cursor: hand;" text="🔄 Actualiser" />
 
             </HBox>
 
+            <!-- ========================================================== -->
+            <!-- TABLEAU DES RÉSULTATS                                      -->
+            <!-- ========================================================== -->
             <VBox spacing="5.0" VBox.vgrow="ALWAYS">
 
+                <!-- Compteur des résultats -->
                 <HBox alignment="CENTER_LEFT" spacing="5.0">
                     <Text fx:id="resultCountLabel" style="-fx-font-size: 13px; -fx-fill: #7f8c8d; -fx-font-weight: bold;" text="Nombre des resultats : 0" />
                     <Region HBox.hgrow="ALWAYS" />
                 </HBox>
 
+                <!-- Tableau -->
                 <ScrollPane fitToHeight="true" fitToWidth="true" style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #ecf0f1; -fx-border-radius: 8;" VBox.vgrow="ALWAYS">
                     <TableView fx:id="searchResultTable" style="-fx-background-color: white; -fx-background-radius: 8;">
 
                         <columns>
-                            <TableColumn fx:id="numDossierColumn" prefWidth="120" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="ملف م.ق رقم " />
-                            <TableColumn fx:id="numMessagerieColumn" prefWidth="110" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="رقم الرقم المراسلة بكتابة الضبط" />
+                            <TableColumn fx:id="numDossierColumn" prefWidth="120" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="ملف م.ق رقم" />
+                            <TableColumn fx:id="numMessagerieColumn" prefWidth="110" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="رقم المراسلة" />
                             <TableColumn fx:id="sourceColumn" prefWidth="110" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="المصدر" />
                             <TableColumn fx:id="avocatColumn" prefWidth="110" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="المحامي" />
                             <TableColumn fx:id="interetColumn" prefWidth="90" style="-fx-font-weight: bold; -fx-alignment: CENTER_RIGHT;" text="الفائدة" />
                             <TableColumn fx:id="montantColumn" prefWidth="100" style="-fx-font-weight: bold; -fx-alignment: CENTER_RIGHT;" text="المبلغ" />
                             <TableColumn fx:id="statutColumn" prefWidth="90" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="ملف عدد" />
                             <TableColumn fx:id="dateColumn" prefWidth="100" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="حكم أو قرار عدد" />
-                     <TableColumn fx:id="dateColumn1" prefWidth="100" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="التاريخ المقرر" />
-                     <TableColumn fx:id="dateColumn2" prefWidth="100" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="مراجع المراسلة" />
-                     <TableColumn fx:id="dateColumn21" prefWidth="100" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="حالة المراسلة " />
+                            <TableColumn fx:id="dateColumn1" prefWidth="100" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="التاريخ المقرر" />
+                            <TableColumn fx:id="dateColumn2" prefWidth="100" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="مراجع المراسلة" />
+                            <TableColumn fx:id="dateColumn21" prefWidth="100" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="حالة المراسلة" />
                         </columns>
 
                         <placeholder>
@@ -85,24 +97,26 @@
                     </TableView>
                 </ScrollPane>
 
+                <!-- Pagination -->
                 <HBox alignment="CENTER" spacing="10.0" style="-fx-padding: 5 0 0 0;">
-                    <Button onAction="#handlePreviousPage" style="-fx-background-color: transparent; -fx-text-fill: #2c3e50; -fx-font-weight: bold; -fx-cursor: hand;" text="Precident" />
+                    <Button onAction="#handlePreviousPage" style="-fx-background-color: transparent; -fx-text-fill: #2c3e50; -fx-font-weight: bold; -fx-cursor: hand;" text="◀ Precident" />
                     <Text fx:id="pageLabel" style="-fx-font-size: 12px; -fx-fill: #7f8c8d;" text="Page 1 de 1" />
-                    <Button onAction="#handleNextPage" style="-fx-background-color: transparent; -fx-text-fill: #2c3e50; -fx-font-weight: bold; -fx-cursor: hand;" text="Suivant" />
+                    <Button onAction="#handleNextPage" style="-fx-background-color: transparent; -fx-text-fill: #2c3e50; -fx-font-weight: bold; -fx-cursor: hand;" text="Suivant ▶" />
                 </HBox>
 
             </VBox>
+
+        </VBox>
     </center>
 
+    <!-- ============================================================ -->
+    <!-- BOTTOM : BARRE DE STATUT                                      -->
+    <!-- ============================================================ -->
     <bottom>
-        <HBox alignment="TOP_RIGHT" spacing="12.0" style="-fx-background-color: #2c3e50; -fx-padding: 4 15 4 15;">
-         <children>
-            <Button alignment="TOP_RIGHT" mnemonicParsing="false" style="-fx-text-fill: white; -fx-background-color: #c0392b;" text="⏻">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Button>
-         </children>
+        <HBox spacing="12.0" style="-fx-background-color: #2c3e50; -fx-padding: 4 15 4 15;">
+            <Text fx:id="statusLabel" style="-fx-font-size: 11px; -fx-fill: #ecf0f1;" text="✅ جاهز للبحث" />
+            <Text style="-fx-font-size: 11px; -fx-fill: #7f8c8d;" text="|" />
+            <Text fx:id="infoLabel" style="-fx-font-size: 11px; -fx-fill: #ecf0f1;" text="Nombre des resultats : 0" />
         </HBox>
     </bottom>
 

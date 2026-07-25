@@ -14,6 +14,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -45,6 +46,10 @@ public class MainController implements Initializable {
     @FXML private Text countLabel;
     @FXML private TextField searchField;
 
+    // ==================== BOUTONS ====================
+    @FXML private Button searchButton;
+    @FXML private Button refreshButton;
+
     // ==================== FORMULAIRE ====================
     @FXML private TextField numDossierField;
     @FXML private TextField numMessagerieField;
@@ -64,6 +69,7 @@ public class MainController implements Initializable {
     private ObservableList<Dossier> dossierList;
     private FilteredList<Dossier> filteredData;
     private Personne currentPersonne;
+    private Stage filterStage;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -74,19 +80,33 @@ public class MainController implements Initializable {
         etatComboBox.setValue("جاهز");
 
         setupTableColumns();
+        
+        // ✅ CHARGEMENT AUTOMATIQUE DES DONNÉES
         loadData();
+        System.out.println("✅ Données chargées automatiquement");
 
-        dossierTable.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> {
-                    if (newValue != null) {
-                        displayDossierDetails(newValue);
-                    }
+        // Double-clic sur le tableau pour ouvrir le formulaire
+        dossierTable.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                Dossier selectedDossier = dossierTable.getSelectionModel().getSelectedItem();
+                if (selectedDossier != null) {
+                    openDossierForm(selectedDossier);
                 }
+            }
+        });
+
+        // Sélection simple pour afficher les détails
+        dossierTable.getSelectionModel().selectedItemProperty().addListener(
+            (observable, oldValue, newValue) -> {
+                if (newValue != null) {
+                    displayDossierDetails(newValue);
+                }
+            }
         );
     }
 
     // ==================== SETTERS POUR LES BARRES ====================
-
+    
     public void setTopBarController(TopBarController topBarController) {
         this.topBarController = topBarController;
         System.out.println("✅ topBarController injecté dans MainController");
@@ -109,33 +129,24 @@ public class MainController implements Initializable {
 
     public void updateTopBar() {
         if (topBarController != null) {
-            System.out.println("🔍 Mise à jour de la TopBar...");
-
             topBarController.updateDate();
-
             if (currentPersonne != null) {
-                String nomComplet = currentPersonne.getPrenom() + " " + currentPersonne.getNom();
-                topBarController.setUserLabel(nomComplet);
-                System.out.println("✅ Utilisateur affiché : " + nomComplet);
+                topBarController.setUserLabel(currentPersonne.getPrenom() + " " + currentPersonne.getNom());
             } else {
                 SessionManager session = SessionManager.getInstance();
                 if (session.hasActiveSession()) {
                     Personne p = session.getCurrentPersonne();
                     if (p != null) {
-                        String nomComplet = p.getPrenom() + " " + p.getNom();
-                        topBarController.setUserLabel(nomComplet);
-                        System.out.println("✅ Utilisateur depuis session : " + nomComplet);
+                        topBarController.setUserLabel(p.getPrenom() + " " + p.getNom());
                     }
                 }
             }
             topBarController.setPageTitle("📋 لوحة التحكم");
-        } else {
-            System.out.println("⚠️ topBarController est NULL !");
         }
     }
 
     // ==================== CONFIGURATION DU TABLEAU ====================
-
+    
     private void setupTableColumns() {
         numDossierColumn.setCellValueFactory(new PropertyValueFactory<>("numDossier"));
         numMessagerieColumn.setCellValueFactory(new PropertyValueFactory<>("numMessagerie"));
@@ -151,31 +162,120 @@ public class MainController implements Initializable {
     }
 
     // ==================== CHARGEMENT DES DONNÉES ====================
-
-    private void loadData() {
+    
+    /**
+     * ✅ Charge les données depuis la base de données
+     */
+    public void loadData() {
         try {
+            System.out.println("🔄 Chargement des données...");
             List<Dossier> dossiers = dossierService.getAllDossiers();
-            if (dossiers != null) {
-                dossierList = FXCollections.observableArrayList(dossiers);
+            
+            if (dossiers != null && !dossiers.isEmpty()) {
+                System.out.println("✅ " + dossiers.size() + " dossier(s) chargé(s)");
+                if (dossierList == null) {
+                    dossierList = FXCollections.observableArrayList(dossiers);
+                } else {
+                    dossierList.setAll(dossiers);
+                }
             } else {
-                dossierList = FXCollections.observableArrayList();
+                System.out.println("⚠️ Aucun dossier trouvé dans la base");
+                if (dossierList == null) {
+                    dossierList = FXCollections.observableArrayList();
+                } else {
+                    dossierList.clear();
+                }
             }
 
-            filteredData = new FilteredList<>(dossierList, p -> true);
+            // Initialiser le filtre si nécessaire
+            if (filteredData == null) {
+                filteredData = new FilteredList<>(dossierList, p -> true);
+            } else {
+                filteredData = new FilteredList<>(dossierList, p -> true);
+            }
+
             SortedList<Dossier> sortedData = new SortedList<>(filteredData);
             sortedData.comparatorProperty().bind(dossierTable.comparatorProperty());
 
             dossierTable.setItems(sortedData);
             updateCount();
 
+            if (bottomBarController != null) {
+                bottomBarController.setStatusSuccess("✅ " + dossierList.size() + " dossier(s) chargé(s)");
+            }
+
         } catch (Exception e) {
+            System.err.println("❌ Erreur lors du chargement des données: " + e.getMessage());
             e.printStackTrace();
-            showAlert("❌ Erreur", "Erreur lors du chargement des données");
+            if (bottomBarController != null) {
+                bottomBarController.setStatusError("❌ Erreur de chargement: " + e.getMessage());
+            }
+            showAlert("❌ Erreur", "Erreur lors du chargement des données: " + e.getMessage());
+        }
+    }
+
+    /**
+     * ✅ Rafraîchit le tableau
+     */
+    @FXML
+    public void handleRefresh() {
+        System.out.println("🔄 Rafraîchissement du tableau...");
+        if (bottomBarController != null) {
+            bottomBarController.showProcessing("جاري التحميل...");
+        }
+        loadData();
+        if (bottomBarController != null) {
+            bottomBarController.setStatusSuccess("✅ Données mises à jour");
+        }
+    }
+
+    /**
+     * ✅ Ouvre le panneau de filtrage
+     */
+
+    @FXML
+    public void handleSearch() {
+        try {
+            // Vérifier si la fenêtre est déjà ouverte
+            if (filterStage != null && filterStage.isShowing()) {
+                filterStage.requestFocus();
+                return;
+            }
+
+            // ✅ Ouvrir search.fxml
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/DRJ/dossierexpert/views/pages/filter-panel.fxml")
+            );
+            BorderPane searchRoot = loader.load();
+
+            // Récupérer le contrôleur
+            SearchController searchController = loader.getController();
+
+            // ✅ CORRECTION : Utiliser setMainController(this) au lieu de setMainLayoutController
+            searchController.setMainController(this);  // 👈 Utiliser setMainController
+            searchController.setTopBarController(topBarController);
+            searchController.setBottomBarController(bottomBarController);
+
+            filterStage = new Stage();
+            filterStage.setTitle("🔍 Recherche avancée");
+            filterStage.setScene(new Scene(searchRoot));
+            filterStage.setResizable(true);
+            filterStage.setWidth(900);
+            filterStage.setHeight(700);
+            filterStage.show();
+
+            if (bottomBarController != null) {
+                bottomBarController.setStatusInfo("🔍 Ouverture de la recherche");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("❌ خطأ", "Erreur lors de l'ouverture de la recherche");
         }
     }
 
     // ==================== AFFICHAGE DES DÉTAILS ====================
-
+    
     private void displayDossierDetails(Dossier dossier) {
         if (dossier == null) return;
 
@@ -189,13 +289,17 @@ public class MainController implements Initializable {
         decisionField.setText(dossier.getDecision());
         dateField.setText(dossier.getDateDossier() != null ? dossier.getDateDossier() : "");
         statutField.setText(dossier.getStatut());
-
+        
         if (dossier.getStatut() != null) {
-            etatComboBox.setValue(dossier.getStatut());
+            if ("prêt".equals(dossier.getStatut())) {
+                etatComboBox.setValue("جاهز");
+            } else {
+                etatComboBox.setValue("غير جاهز");
+            }
         } else {
             etatComboBox.setValue("جاهز");
         }
-
+        
         remarquesField.setText(dossier.getRemarques());
 
         if (bottomBarController != null) {
@@ -203,8 +307,41 @@ public class MainController implements Initializable {
         }
     }
 
-    // ==================== UPDATE COUNT ====================
+    /**
+     * ✅ Ouvre le formulaire de dossier avec les informations du dossier sélectionné
+     */
+    public void openDossierForm(Dossier dossier) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/com/DRJ/dossierexpert/views/pages/dossier-form.fxml")
+            );
+            BorderPane formRoot = loader.load();
 
+            // Récupérer le contrôleur et passer le dossier
+            DossierFormController formController = loader.getController();
+            formController.setDossier(dossier);
+            formController.setMainController(this);
+
+            Stage formStage = new Stage();
+            formStage.setTitle("📝 تعديل الملف - " + dossier.getNumDossier());
+            formStage.setScene(new Scene(formRoot));
+            formStage.setResizable(true);
+            formStage.setWidth(800);
+            formStage.setHeight(700);
+            formStage.show();
+
+            if (bottomBarController != null) {
+                bottomBarController.setStatusInfo("📝 Ouverture du formulaire pour : " + dossier.getNumDossier());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("❌ خطأ", "Erreur lors de l'ouverture du formulaire");
+        }
+    }
+
+    // ==================== UPDATE COUNT ====================
+    
     private void updateCount() {
         int count = dossierTable.getItems().size();
         countLabel.setText("عدد الملفات : " + count);
@@ -214,9 +351,9 @@ public class MainController implements Initializable {
     }
 
     // ==================== ACTIONS ====================
-
+    
     @FXML
-    private void handleSearch() {
+    private void handleSearchLocal() {
         String searchText = searchField.getText().trim();
 
         if (searchText.isEmpty()) {
@@ -227,9 +364,9 @@ public class MainController implements Initializable {
         } else {
             filteredData.setPredicate(dossier -> {
                 return dossier.getNumDossier().toLowerCase().contains(searchText.toLowerCase()) ||
-                        (dossier.getSource() != null && dossier.getSource().toLowerCase().contains(searchText.toLowerCase())) ||
-                        (dossier.getAvocat() != null && dossier.getAvocat().toLowerCase().contains(searchText.toLowerCase())) ||
-                        (dossier.getNumMessagerie() != null && dossier.getNumMessagerie().toLowerCase().contains(searchText.toLowerCase()));
+                       (dossier.getSource() != null && dossier.getSource().toLowerCase().contains(searchText.toLowerCase())) ||
+                       (dossier.getAvocat() != null && dossier.getAvocat().toLowerCase().contains(searchText.toLowerCase())) ||
+                       (dossier.getNumMessagerie() != null && dossier.getNumMessagerie().toLowerCase().contains(searchText.toLowerCase()));
             });
             if (bottomBarController != null) {
                 bottomBarController.setStatus("🔍 نتائج البحث عن : " + searchText);
@@ -273,7 +410,14 @@ public class MainController implements Initializable {
             dossier.setReferencesMessagerie(referencesField.getText().trim());
             dossier.setDecision(decisionField.getText().trim());
             dossier.setDateDossier(dateField.getText().trim());
-            dossier.setStatut(etatComboBox.getValue());
+
+            String statutValue = etatComboBox.getValue();
+            if ("جاهز".equals(statutValue)) {
+                dossier.setStatut("prêt");
+            } else {
+                dossier.setStatut("Pas prêt");
+            }
+
             dossier.setRemarques(remarquesField.getText().trim());
 
             if (currentPersonne != null) {
@@ -287,7 +431,7 @@ public class MainController implements Initializable {
                     bottomBarController.setStatusSuccess("تم حفظ الملف بنجاح");
                 }
                 showAlert("✅ نجاح", "تم حفظ الملف بنجاح");
-                loadData();
+                loadData(); // Recharger les données
                 clearForm();
             } else {
                 if (bottomBarController != null) {
@@ -301,6 +445,7 @@ public class MainController implements Initializable {
             }
             showAlert("❌ خطأ", "تأكد من صحة القيم الرقمية");
         } catch (Exception e) {
+            e.printStackTrace();
             if (bottomBarController != null) {
                 bottomBarController.setStatusError(e.getMessage());
             }
@@ -309,7 +454,7 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    private void handlePrint() {
+    public void handlePrint() {
         Dossier selectedDossier = dossierTable.getSelectionModel().getSelectedItem();
 
         if (selectedDossier == null) {
@@ -318,12 +463,20 @@ public class MainController implements Initializable {
         }
 
         try {
+            // ✅ Load the dedicated preview FXML (dossier-preview.fxml)
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/DRJ/dossierexpert/views/pages/preview.fxml")
+                    getClass().getResource("/com/DRJ/dossierexpert/views/pages/dossier-preview.fxml")
             );
             Scene scene = new Scene(loader.load());
 
+            // ✅ Récupérer le contrôleur (PdfPreviewController)
             PdfPreviewController previewController = loader.getController();
+
+            // ✅ Injecter les barres
+            previewController.setTopBarController(topBarController);
+            previewController.setBottomBarController(bottomBarController);
+
+            // ✅ Passer le dossier
             previewController.setDossier(selectedDossier);
 
             Stage stage = new Stage();
@@ -340,7 +493,6 @@ public class MainController implements Initializable {
             showAlert("❌ خطأ", "Erreur lors de l'ouverture de l'aperçu");
         }
     }
-
     @FXML
     private void handleClear() {
         clearForm();
@@ -370,5 +522,23 @@ public class MainController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    // ==================== GETTERS ====================
+
+    public TableView<Dossier> getDossierTable() {
+        return dossierTable;
+    }
+
+    public FilteredList<Dossier> getFilteredData() {
+        return filteredData;
+    }
+
+    public BottomBarController getBottomBarController() {
+        return bottomBarController;
+    }
+
+    public DossierService getDossierService() {
+        return dossierService;
     }
 }

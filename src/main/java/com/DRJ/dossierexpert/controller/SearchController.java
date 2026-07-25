@@ -2,6 +2,7 @@ package com.DRJ.dossierexpert.controller;
 
 import com.DRJ.dossierexpert.model.Dossier;
 import com.DRJ.dossierexpert.service.DossierService;
+import com.DRJ.dossierexpert.utils.SessionManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -22,14 +23,19 @@ import java.util.ResourceBundle;
 
 public class SearchController implements Initializable {
 
-    // ==================== RÉFÉRENCES AUX BARRES ====================
+    // ==================== RÉFÉRENCES ====================
     private TopBarController topBarController;
     private BottomBarController bottomBarController;
-    private MainLayoutController mainLayoutController;
+    private MainController mainController;  // ✅ Changé de MainLayoutController à MainController
 
-    // ==================== COMPOSANTS DE RECHERCHE ====================
+    // ==================== COMPOSANTS ====================
     @FXML private ComboBox<String> searchCriteriaCombo;
     @FXML private TextField searchField;
+    @FXML private Text dateLabel;
+    @FXML private Text resultCountLabel;
+    @FXML private Text pageLabel;
+    @FXML private Text statusLabel;
+    @FXML private Text infoLabel;
 
     // ==================== TABLEAU ====================
     @FXML private TableView<Dossier> searchResultTable;
@@ -45,10 +51,6 @@ public class SearchController implements Initializable {
     @FXML private TableColumn<Dossier, String> dateColumn2;
     @FXML private TableColumn<Dossier, String> dateColumn21;
 
-    // ==================== COMPTEURS ====================
-    @FXML private Text resultCountLabel;
-    @FXML private Text pageLabel;
-
     // ==================== SERVICES ====================
     private DossierService dossierService;
     private ObservableList<Dossier> searchResults;
@@ -59,7 +61,9 @@ public class SearchController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         System.out.println("✅ SearchController initialisé");
 
-        // ==================== COMBOBOX ====================
+        String today = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        dateLabel.setText("Date : " + today);
+
         searchCriteriaCombo.getItems().addAll(
                 "رقم الملف",
                 "رقم المراسلة",
@@ -71,55 +75,35 @@ public class SearchController implements Initializable {
         );
         searchCriteriaCombo.setValue("رقم الملف");
 
-        // ==================== SERVICE ====================
         dossierService = new DossierService();
 
-        // ==================== TABLEAU ====================
         setupTableColumns();
-
-        // ==================== INITIALISATION ====================
         searchResults = FXCollections.observableArrayList();
         searchResultTable.setItems(searchResults);
         updateResultCount(0);
 
-        // ==================== STATUT ====================
-        if (bottomBarController != null) {
-            bottomBarController.setStatus("🔍 جاهز للبحث");
+        if (statusLabel != null) {
+            statusLabel.setText("✅ جاهز للبحث");
+        }
+        if (infoLabel != null) {
+            infoLabel.setText("Nombre des resultats : 0");
         }
     }
 
-    // ==================== SETTERS POUR LES BARRES ====================
+    // ==================== SETTERS ====================
 
     public void setTopBarController(TopBarController topBarController) {
         this.topBarController = topBarController;
-        System.out.println("✅ topBarController injecté dans SearchController");
-        updateTopBar();
     }
 
     public void setBottomBarController(BottomBarController bottomBarController) {
         this.bottomBarController = bottomBarController;
-        System.out.println("✅ bottomBarController injecté dans SearchController");
-        if (bottomBarController != null) {
-            bottomBarController.setStatus("🔍 جاهز للبحث");
-        }
     }
 
-    public void setMainLayoutController(MainLayoutController mainLayoutController) {
-        this.mainLayoutController = mainLayoutController;
-    }
-
-    /**
-     * Met à jour la barre supérieure
-     */
-    private void updateTopBar() {
-        if (topBarController != null) {
-            topBarController.setPageTitle("🔍 Recherche");
-            topBarController.updateDate();
-            topBarController.updateUserInfo();
-            System.out.println("✅ TopBar mise à jour dans SearchController");
-        } else {
-            System.out.println("⚠️ topBarController est NULL dans SearchController");
-        }
+    // ✅ MODIFIÉ : Accepte MainController au lieu de MainLayoutController
+    public void setMainController(MainController mainController) {
+        this.mainController = mainController;
+        System.out.println("✅ MainController injecté dans SearchController");
     }
 
     // ==================== CONFIGURATION DU TABLEAU ====================
@@ -138,7 +122,7 @@ public class SearchController implements Initializable {
         dateColumn21.setCellValueFactory(new PropertyValueFactory<>("statut"));
     }
 
-    // ==================== ACTIONS RECHERCHE ====================
+    // ==================== ACTIONS ====================
 
     @FXML
     private void handleFilter() {
@@ -147,15 +131,15 @@ public class SearchController implements Initializable {
 
         if (searchValue.isEmpty()) {
             showAlert("⚠️ تنبيه", "الرجاء إدخال قيمة للبحث");
-            if (bottomBarController != null) {
-                bottomBarController.setStatusWarning("الرجاء إدخال قيمة للبحث");
+            if (statusLabel != null) {
+                statusLabel.setText("⚠️ الرجاء إدخال قيمة للبحث");
             }
             return;
         }
 
         try {
-            if (bottomBarController != null) {
-                bottomBarController.showProcessing("جاري البحث...");
+            if (statusLabel != null) {
+                statusLabel.setText("⏳ جاري البحث...");
             }
 
             List<Dossier> results = dossierService.searchDossiers(criteria, searchValue);
@@ -165,8 +149,8 @@ public class SearchController implements Initializable {
                 updateResultCount(results.size());
                 pageLabel.setText("Page 1 de " + (int) Math.ceil((double) results.size() / itemsPerPage));
 
-                if (bottomBarController != null) {
-                    bottomBarController.setStatusSuccess("تم العثور على " + results.size() + " ملف(ات)");
+                if (statusLabel != null) {
+                    statusLabel.setText("✅ تم العثور على " + results.size() + " ملف(ات)");
                 }
                 showAlert("✅ Résultat", "تم العثور على " + results.size() + " ملف(ات)");
             } else {
@@ -174,16 +158,16 @@ public class SearchController implements Initializable {
                 updateResultCount(0);
                 pageLabel.setText("Page 1 de 1");
 
-                if (bottomBarController != null) {
-                    bottomBarController.setStatusInfo("لا توجد نتائج مطابقة");
+                if (statusLabel != null) {
+                    statusLabel.setText("ℹ️ لا توجد نتائج");
                 }
                 showAlert("ℹ️ Information", "لا توجد نتائج مطابقة للبحث");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            if (bottomBarController != null) {
-                bottomBarController.setStatusError("Erreur: " + e.getMessage());
+            if (statusLabel != null) {
+                statusLabel.setText("❌ Erreur: " + e.getMessage());
             }
             showAlert("❌ خطأ", "Erreur lors de la recherche: " + e.getMessage());
         }
@@ -197,12 +181,10 @@ public class SearchController implements Initializable {
         updateResultCount(0);
         pageLabel.setText("Page 1 de 1");
 
-        if (bottomBarController != null) {
-            bottomBarController.setStatus("✅ تم إعادة ضبط البحث");
+        if (statusLabel != null) {
+            statusLabel.setText("✅ Filtres réinitialisés");
         }
     }
-
-    // ==================== PAGINATION ====================
 
     @FXML
     private void handlePreviousPage() {
@@ -234,12 +216,10 @@ public class SearchController implements Initializable {
         pageLabel.setText("Page " + currentPage + " de " + Math.max(1, totalPages));
     }
 
-    // ==================== UPDATE RESULT COUNT ====================
-
     private void updateResultCount(int count) {
         resultCountLabel.setText("Nombre des resultats : " + count);
-        if (bottomBarController != null) {
-            bottomBarController.setInfo("Nombre des resultats : " + count);
+        if (infoLabel != null) {
+            infoLabel.setText("Nombre des resultats : " + count);
         }
     }
 
@@ -247,10 +227,16 @@ public class SearchController implements Initializable {
 
     @FXML
     private void handleBack() {
-        if (mainLayoutController != null) {
-            mainLayoutController.navigateToMain();
+        if (mainController != null) {
+            // ✅ Fermer la fenêtre de recherche
+            Stage stage = (Stage) searchField.getScene().getWindow();
+            stage.close();
+            // Rafraîchir le tableau principal
+            mainController.loadData();
+            if (mainController.getBottomBarController() != null) {
+                mainController.getBottomBarController().setStatusInfo("🔍 Retour à la page principale");
+            }
         } else {
-            // Fallback
             try {
                 Stage stage = (Stage) searchField.getScene().getWindow();
                 FXMLLoader loader = new FXMLLoader(
@@ -268,7 +254,37 @@ public class SearchController implements Initializable {
         }
     }
 
-    // ==================== AFFICHAGE ALERT ====================
+    // ==================== DÉCONNEXION ====================
+
+    @FXML
+    private void handleLogout() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("تأكيد الخروج");
+        alert.setHeaderText("تسجيل الخروج");
+        alert.setContentText("هل أنت متأكد de vouloir vous déconnecter ?");
+
+        if (alert.showAndWait().get() == ButtonType.OK) {
+            SessionManager session = SessionManager.getInstance();
+            session.destroySession();
+
+            try {
+                Stage stage = (Stage) searchField.getScene().getWindow();
+                FXMLLoader loader = new FXMLLoader(
+                        getClass().getResource("/com/DRJ/dossierexpert/views/pages/login.fxml")
+                );
+                Scene scene = new Scene(loader.load());
+                stage.setTitle("خبير الملفات - تسجيل الدخول");
+                stage.setScene(scene);
+                stage.setMaximized(false);
+                stage.setResizable(false);
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // ==================== ALERT ====================
 
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -286,13 +302,5 @@ public class SearchController implements Initializable {
 
     public ObservableList<Dossier> getSearchResults() {
         return searchResults;
-    }
-
-    public TopBarController getTopBarController() {
-        return topBarController;
-    }
-
-    public BottomBarController getBottomBarController() {
-        return bottomBarController;
     }
 }

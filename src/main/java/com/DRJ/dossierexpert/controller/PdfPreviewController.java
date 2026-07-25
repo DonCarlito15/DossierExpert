@@ -19,6 +19,10 @@ import java.util.ResourceBundle;
 
 public class PdfPreviewController implements Initializable {
 
+    // ==================== RÉFÉRENCES AUX BARRES ====================
+    private TopBarController topBarController;
+    private BottomBarController bottomBarController;
+
     // ==================== TOP BAR ====================
     @FXML private Text dossierNumberLabel;
 
@@ -42,9 +46,35 @@ public class PdfPreviewController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        System.out.println("✅ PdfPreviewController initialisé");
+
         // Date de création du rapport
         previewFooterDate.setText("تاريخ الإنشاء : " +
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+    }
+
+    // ==================== SETTERS POUR LES BARRES ====================
+
+    public void setTopBarController(TopBarController topBarController) {
+        this.topBarController = topBarController;
+        System.out.println("✅ topBarController injecté dans PdfPreviewController");
+        updateTopBar();
+    }
+
+    public void setBottomBarController(BottomBarController bottomBarController) {
+        this.bottomBarController = bottomBarController;
+        System.out.println("✅ bottomBarController injecté dans PdfPreviewController");
+        if (bottomBarController != null) {
+            bottomBarController.setStatus("📄 Aperçu du dossier");
+        }
+    }
+
+    private void updateTopBar() {
+        if (topBarController != null) {
+            topBarController.setPageTitle("📄 معاينة الملف");
+            topBarController.updateDate();
+            topBarController.updateUserInfo();
+        }
     }
 
     /**
@@ -54,6 +84,7 @@ public class PdfPreviewController implements Initializable {
      */
     public void setDossier(Dossier dossier) {
         this.currentDossier = dossier;
+        System.out.println("✅ Dossier reçu dans PdfPreviewController : " + (dossier != null ? dossier.getNumDossier() : "null"));
 
         if (dossier != null) {
             // Numéro du dossier dans la barre de titre
@@ -74,13 +105,22 @@ public class PdfPreviewController implements Initializable {
             previewEtat.setText(dossier.isEtatDossier() ? "نشط" : "غير نشط");
 
             // Couleur du statut
-            if ("جاهز".equals(dossier.getStatut())) {
+            if ("prêt".equals(dossier.getStatut())) {
                 previewStatut.setStyle("-fx-fill: #27ae60; -fx-font-weight: bold; -fx-font-size: 13px;");
                 previewStatut.setText("جاهز");
             } else {
                 previewStatut.setStyle("-fx-fill: #e74c3c; -fx-font-weight: bold; -fx-font-size: 13px;");
                 previewStatut.setText("غير جاهز");
             }
+
+            if (bottomBarController != null) {
+                bottomBarController.setStatus("📄 الملف : " + dossier.getNumDossier());
+                bottomBarController.setInfo("ملف : " + dossier.getNumDossier());
+            }
+
+            System.out.println("✅ Aperçu chargé pour le dossier : " + dossier.getNumDossier());
+        } else {
+            System.out.println("⚠️ Dossier null dans PdfPreviewController");
         }
     }
 
@@ -97,14 +137,23 @@ public class PdfPreviewController implements Initializable {
         }
 
         try {
+            if (bottomBarController != null) {
+                bottomBarController.showProcessing("جاري الطباعة...");
+            }
+
             // Simuler l'impression
-            // Ici vous pouvez appeler votre service d'impression
             // printService.printDossier(currentDossier);
 
+            if (bottomBarController != null) {
+                bottomBarController.setStatusSuccess("تم إرسال الملف إلى الطابعة");
+            }
             showAlert("✅ نجاح", "تم إرسال الملف إلى الطابعة بنجاح");
 
         } catch (Exception e) {
             e.printStackTrace();
+            if (bottomBarController != null) {
+                bottomBarController.setStatusError("Erreur: " + e.getMessage());
+            }
             showAlert("❌ خطأ", "Erreur lors de l'impression: " + e.getMessage());
         }
     }
@@ -120,14 +169,23 @@ public class PdfPreviewController implements Initializable {
         }
 
         try {
+            if (bottomBarController != null) {
+                bottomBarController.showProcessing("جاري إرسال الإشعار...");
+            }
+
             // Simuler l'envoi de notification
-            // Ici vous pouvez appeler votre service de notification
             // notificationService.sendNotification(currentDossier);
 
+            if (bottomBarController != null) {
+                bottomBarController.setStatusSuccess("تم إرسال الإشعار");
+            }
             showAlert("✅ نجاح", "تم إرسال الإشعار بنجاح");
 
         } catch (Exception e) {
             e.printStackTrace();
+            if (bottomBarController != null) {
+                bottomBarController.setStatusError("Erreur: " + e.getMessage());
+            }
             showAlert("❌ خطأ", "Erreur lors de l'envoi de l'notification: " + e.getMessage());
         }
     }
@@ -143,14 +201,23 @@ public class PdfPreviewController implements Initializable {
         }
 
         try {
+            if (bottomBarController != null) {
+                bottomBarController.showProcessing("جاري التصدير...");
+            }
+
             // Simuler l'export
-            // Ici vous pouvez appeler votre service d'export
             // exportService.exportDossier(currentDossier);
 
+            if (bottomBarController != null) {
+                bottomBarController.setStatusSuccess("تم تصدير الملف");
+            }
             showAlert("✅ نجاح", "تم تصدير الملف بنجاح");
 
         } catch (Exception e) {
             e.printStackTrace();
+            if (bottomBarController != null) {
+                bottomBarController.setStatusError("Erreur: " + e.getMessage());
+            }
             showAlert("❌ خطأ", "Erreur lors de l'export: " + e.getMessage());
         }
     }
@@ -166,10 +233,20 @@ public class PdfPreviewController implements Initializable {
                     getClass().getResource("/com/DRJ/dossierexpert/views/pages/main.fxml")
             );
             Scene scene = new Scene(loader.load());
+
+            // Passer l'utilisateur au MainController
+            MainController mainController = loader.getController();
+            SessionManager session = SessionManager.getInstance();
+            if (session.hasActiveSession()) {
+                mainController.setCurrentPersonne(session.getCurrentPersonne());
+            }
+
             stage.setTitle("📋 خبير الملفات - لوحة التحكم");
             stage.setScene(scene);
             stage.setMaximized(true);
             stage.show();
+
+            System.out.println("✅ Retour à la page principale");
         } catch (IOException e) {
             e.printStackTrace();
             showAlert("❌ خطأ", "Erreur lors du retour à la page principale");
@@ -187,11 +264,9 @@ public class PdfPreviewController implements Initializable {
         alert.setContentText("هل أنت متأكد من رغبتك في تسجيل الخروج ؟");
 
         if (alert.showAndWait().get() == ButtonType.OK) {
-            // Détruire la session
             SessionManager session = SessionManager.getInstance();
             session.destroySession();
 
-            // Retourner à l'écran de connexion
             try {
                 Stage stage = (Stage) dossierNumberLabel.getScene().getWindow();
                 FXMLLoader loader = new FXMLLoader(
@@ -203,6 +278,7 @@ public class PdfPreviewController implements Initializable {
                 stage.setMaximized(false);
                 stage.setResizable(false);
                 stage.show();
+                System.out.println("✅ Déconnexion réussie");
             } catch (IOException e) {
                 e.printStackTrace();
             }
