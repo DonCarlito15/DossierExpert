@@ -17,7 +17,14 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane style="-fx-background-color: #f0f4f8;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.DRJ.dossierexpert.controller.MainController">
+<BorderPane style="-fx-background-color: #f0f4f8;"
+            xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.DRJ.dossierexpert.controller.MainController"
+            prefWidth="1200"
+            prefHeight="700"
+            maxWidth="1600"
+            maxHeight="1000">
 
     <!-- ============================================================ -->
     <!-- TOP : BARRE DE TITRE                                         -->
@@ -35,19 +42,19 @@
             <!-- ========================================================== -->
             <!-- PARTIE GAUCHE : TABLEAU                                    -->
             <!-- ========================================================== -->
-            <VBox nodeOrientation="RIGHT_TO_LEFT" spacing="10.0">
+            <VBox nodeOrientation="RIGHT_TO_LEFT" spacing="10.0" style="-fx-background-color: transparent;">
                 <padding>
-                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
                 </padding>
 
                 <!-- Barre de recherche -->
                 <HBox alignment="CENTER_RIGHT" nodeOrientation="RIGHT_TO_LEFT" spacing="10.0">
-                    <Button onAction="#handleResetSearch" style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 10 6 10; -fx-cursor: hand;" text="🔄" />
-                    <Button onAction="#handleSearch" prefHeight="29.0" prefWidth="247.0" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 15 6 15; -fx-cursor: hand;" text="Rechercher" />
+                    <Button onAction="#handleRefresh" prefHeight="34.0" prefWidth="44.0" style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 10 6 10; -fx-cursor: hand; -fx-background-insets: 0; -fx-border-width: 0;" text="🔄" />
+                    <Button onAction="#handleSearch" prefHeight="34.0" prefWidth="220.0" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 15 6 15; -fx-cursor: hand; -fx-background-insets: 0; -fx-border-width: 0;" text="Rechercher" />
                 </HBox>
 
                 <!-- Tableau -->
-                <TableView fx:id="dossierTable" nodeOrientation="RIGHT_TO_LEFT" style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #ecf0f1; -fx-border-radius: 8;" VBox.vgrow="ALWAYS">
+                <TableView fx:id="dossierTable" nodeOrientation="RIGHT_TO_LEFT" style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #ecf0f1; -fx-border-radius: 8; -fx-font-size: 13px;" VBox.vgrow="ALWAYS">
 
                     <columns>
                         <TableColumn fx:id="numDossierColumn" prefWidth="120" style="-fx-font-weight: bold; -fx-alignment: CENTER;" text="ملف م.ق رقم " />
@@ -83,7 +90,7 @@
             <!-- ========================================================== -->
             <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent; -fx-padding: 5;">
 
-                <VBox nodeOrientation="RIGHT_TO_LEFT" spacing="8.0" style="-fx-padding: 10 10 15 10; -fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #ecf0f1; -fx-border-radius: 8;">
+                <VBox nodeOrientation="RIGHT_TO_LEFT" spacing="8.0" style="-fx-padding: 12 12 16 12; -fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #ecf0f1; -fx-border-radius: 8;">
 
                     <!-- Titre du formulaire -->
                     <Label style="-fx-font-weight: bold; -fx-font-size: 15px; -fx-text-fill: #2c3e50;" text="📝 معلومات الملف" />
@@ -94,13 +101,13 @@
                     <!-- Numéro dossier -->
                     <VBox spacing="2.0">
                         <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="ملف م.ق رقم :" />
-                        <TextField fx:id="numDossierField" promptText="رقم الملف" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 8 6 8; -fx-font-size: 12px;" />
+                        <TextField fx:id="numDossierField" promptText="رقم الملف" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 8 10 8 10; -fx-font-size: 13px;" />
                     </VBox>
 
                     <!-- Source -->
                     <VBox spacing="2.0">
                         <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="المصدر :" />
-                        <TextField fx:id="sourceField" promptText="المصدر" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 8 6 8; -fx-font-size: 12px;" />
+                        <TextField fx:id="sourceField" promptText="المصدر" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 8 10 8 10; -fx-font-size: 13px;" />
                     </VBox>
 
                     <!-- Numéro messagerie -->
@@ -110,67 +117,68 @@
                                 <Font size="5.0" />
                             </font>
                         </Label>
-                        <TextField fx:id="numMessagerieField" promptText="رقم المراسلة" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 8 6 8; -fx-font-size: 12px;" />
+                        <TextField fx:id="numMessagerieField" promptText="رقم المراسلة" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 8 10 8 10; -fx-font-size: 13px;" />
                     </VBox>
 
                     <!-- Avocat -->
                     <VBox spacing="2.0">
                         <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="المحامي :" />
-                        <TextField fx:id="avocatField" promptText="المحامي" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 8 6 8; -fx-font-size: 12px;" />
+                        <TextField fx:id="avocatField" promptText="المحامي" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 8 10 8 10; -fx-font-size: 13px;" />
                     </VBox>
 
                     <!-- Intérêt -->
                     <VBox spacing="2.0">
                         <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="الفائدة :" />
-                        <TextField fx:id="interetField" promptText="قيمة الفائدة" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 8 6 8; -fx-font-size: 12px;" />
+                        <TextField fx:id="interetField" promptText="قيمة الفائدة" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 8 10 8 10; -fx-font-size: 13px;" />
                     </VBox>
 
                     <!-- Montant -->
                     <VBox spacing="2.0">
                         <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="المبلغ :" />
-                        <TextField fx:id="montantField" promptText="المبلغ" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 8 6 8; -fx-font-size: 12px;" />
+                        <TextField fx:id="montantField" promptText="المبلغ" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 8 10 8 10; -fx-font-size: 13px;" />
                     </VBox>
 
                     <!-- Références messagerie -->
                     <VBox spacing="2.0">
                         <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="ملف عدد :" />
-                        <TextField fx:id="referencesField" promptText="مرجع المراسلة" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 8 6 8; -fx-font-size: 12px;" />
+                        <TextField fx:id="referencesField" promptText="مرجع المراسلة" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 8 10 8 10; -fx-font-size: 13px;" />
                     </VBox>
 
                     <!-- Décision -->
                     <VBox spacing="2.0">
                         <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="حكم أو قرار عدد :" />
-                        <TextField fx:id="decisionField" promptText="القرار" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 8 6 8; -fx-font-size: 12px;" />
+                        <TextField fx:id="decisionField" promptText="القرار" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 8 10 8 10; -fx-font-size: 13px;" />
                     </VBox>
 
                     <!-- Date -->
                     <VBox spacing="2.0">
                         <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="التاريخ المقرر :" />
-                        <TextField fx:id="dateField" promptText="YYYY-MM-DD" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 8 6 8; -fx-font-size: 12px;" />
+                        <TextField fx:id="dateField" promptText="YYYY-MM-DD" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 8 10 8 10; -fx-font-size: 13px;" />
                     </VBox>
 
                     <!-- Statut -->
                     <VBox spacing="2.0">
                         <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="مراجع المراسلة :" />
-                        <TextField fx:id="statutField" promptText="مراجع المراسلة" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 8 6 8; -fx-font-size: 12px;" />
+                        <TextField fx:id="statutField" promptText="مراجع المراسلة" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 8 10 8 10; -fx-font-size: 13px;" />
                     </VBox>
 
                     <!-- État dossier (ComboBox) -->
                     <VBox spacing="2.0">
                         <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="حالة المراسلة :" />
-                        <ComboBox fx:id="etatComboBox" promptText="اختر الحالة" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 4 8 4 8; -fx-font-size: 12px;" />
+                        <ComboBox fx:id="etatComboBox" promptText="اختر الحالة" style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 4 8 4 8; -fx-font-size: 13px;" />
                     </VBox>
 
                     <!-- Remarques -->
                     <VBox spacing="2.0" VBox.vgrow="ALWAYS">
                         <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #34495e;" text="الملاحظات :" />
-                        <TextArea fx:id="remarquesField" prefHeight="80" promptText="ملاحظات..." style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 6 8 6 8; -fx-font-size: 12px;" />
+                        <TextArea fx:id="remarquesField" prefHeight="90" promptText="ملاحظات..." style="-fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #bdc3c7; -fx-border-width: 1.5; -fx-padding: 8 10 8 10; -fx-font-size: 13px;" />
                     </VBox>
 
                     <!-- Boutons : Enregistrer + Imprimer -->
                     <HBox nodeOrientation="RIGHT_TO_LEFT" spacing="10.0" style="-fx-padding: 8 0 0 0;">
-                        <Button onAction="#handleSave" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 8 20 8 20; -fx-font-size: 13px; -fx-cursor: hand;" text="Enregistrer" />
-                        <Button onAction="#handlePrint" style="-fx-background-color: #2980b9; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 8 20 8 20; -fx-font-size: 13px; -fx-cursor: hand;" text="Imprimer" />
+                        <Button onAction="#handleSave" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 8 20 8 20; -fx-font-size: 13px; -fx-cursor: hand; -fx-background-insets: 0; -fx-border-width: 0;" text="Enregistrer" />
+                        <Button onAction="#handlePrint" style="-fx-background-color: #2980b9; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 8 20 8 20; -fx-font-size: 13px; -fx-cursor: hand; -fx-background-insets: 0; -fx-border-width: 0;" text="Imprimer" />
+                        <Button onAction="#handleClear" style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 8 20 8 20; -fx-font-size: 13px; -fx-cursor: hand; -fx-background-insets: 0; -fx-border-width: 0;" text="🗑️ مسح" />
                     </HBox>
 
                 </VBox>

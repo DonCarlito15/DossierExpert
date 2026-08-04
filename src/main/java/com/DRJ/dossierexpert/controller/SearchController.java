@@ -88,6 +88,17 @@ public class SearchController implements Initializable {
         if (infoLabel != null) {
             infoLabel.setText("Nombre des resultats : 0");
         }
+
+        searchResultTable.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                Dossier selected = searchResultTable.getSelectionModel().getSelectedItem();
+                if (selected != null && mainController != null) {
+                    Stage stage = (Stage) searchResultTable.getScene().getWindow();
+                    stage.close();
+                    mainController.openDossierForm(selected);
+                }
+            }
+        });
     }
 
     // ==================== SETTERS ====================

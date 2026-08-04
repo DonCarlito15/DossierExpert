@@ -50,6 +50,7 @@ public class DossierFormController implements Initializable {
         // Remplir le ComboBox
         etatComboBox.getItems().addAll("جاهز", "غير جاهز");
         etatComboBox.setValue("جاهز");
+        remarquesField.setStyle("-fx-text-alignment: right;");
 
         System.out.println("✅ DossierFormController initialisé");
     }

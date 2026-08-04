@@ -14,7 +14,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane style="-fx-background-color: #e8ecf1;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.DRJ.dossierexpert.controller.PdfPreviewController">
+<BorderPane prefWidth="850" prefHeight="700" style="-fx-background-color: #e8ecf1;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.DRJ.dossierexpert.controller.PdfPreviewController">
 
     <!-- ============================================================ -->
     <!-- TOP : BARRE DE TITRE                                         -->
@@ -33,15 +33,17 @@
     <!-- CENTER : APERÇU PDF                                           -->
     <!-- ============================================================ -->
     <center>
-        <ScrollPane fitToHeight="true" fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent; -fx-padding: 15;" BorderPane.alignment="CENTER">
+        <ScrollPane fitToWidth="true" vbarPolicy="AS_NEEDED" hbarPolicy="NEVER" style="-fx-background: transparent; -fx-background-color: transparent; -fx-padding: 15;" BorderPane.alignment="CENTER">
 
-            <VBox alignment="TOP_CENTER" spacing="0.0" style="-fx-padding: 0;" VBox.vgrow="ALWAYS">
+            <VBox alignment="TOP_CENTER" spacing="0.0" style="-fx-padding: 0;">
 
-                <VBox alignment="CENTER" style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #dce1e8; -fx-border-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5); -fx-padding: 30 35 30 35;" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                <!-- ========== CARTE PDF POUR L'IMPRESSION ========== -->
+                <VBox fx:id="printNode" alignment="CENTER" prefWidth="760" maxWidth="760"
+                      style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #dce1e8; -fx-border-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5); -fx-padding: 25 30 25 30;">
 
                     <!-- ========== LOGO CENTRÉ ========== -->
-                    <VBox alignment="CENTER" style="-fx-padding: 0 0 15 0;">
-                        <ImageView fitHeight="100.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                    <VBox alignment="CENTER" style="-fx-padding: 0 0 10 0;">
+                        <ImageView fitHeight="70.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@../assets/logo.png" />
                             </image>
@@ -49,118 +51,106 @@
                     </VBox>
 
                     <!-- ========== EN-TÊTE ========== -->
-                    <VBox alignment="CENTER" spacing="5.0" style="-fx-padding: 0 0 15 0; -fx-border-color: #ecf0f1; -fx-border-width: 0 0 2 0;">
-                        <Text style="-fx-font-size: 12px; -fx-fill: #7f8c8d;" text="تقرير الملف - نموذج رسمي" />
+                    <VBox alignment="CENTER" spacing="3.0" style="-fx-padding: 0 0 10 0; -fx-border-color: #ecf0f1; -fx-border-width: 0 0 2 0;">
+                        <Text style="-fx-font-size: 11px; -fx-fill: #7f8c8d;" text="تقرير الملف - نموذج رسمي" />
                     </VBox>
 
                     <!-- ========== TITRE DU DOSSIER ========== -->
-                    <VBox alignment="CENTER" spacing="5.0" style="-fx-padding: 10 0 10 0;">
-                        <Text style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-fill: #2c3e50; -fx-border-color: #2c3e50; -fx-border-width: 0 0 2 0; -fx-padding: 0 20 5 20;" text="معلومات الملف" />
+                    <VBox alignment="CENTER" spacing="5.0" style="-fx-padding: 5 0 8 0;">
+                        <Text style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-fill: #2c3e50; -fx-border-color: #2c3e50; -fx-border-width: 0 0 2 0; -fx-padding: 0 20 3 20;" text="معلومات الملف" />
                     </VBox>
 
-                    <!-- ========== INFORMATIONS DU DOSSIER ========== -->
-                    <VBox spacing="10.0" style="-fx-padding: 5 0 10 0;">
+                    <!-- ========== GRILLE DES INFORMATIONS ========== -->
+                    <VBox spacing="5.0" style="-fx-padding: 5 0 5 0;">
 
-                        <!-- Ligne 1 : ملف م.ق رقم -->
-                        <HBox alignment="CENTER_RIGHT" spacing="10.0" style="-fx-padding: 3 0 3 0;">
-                            <Text fx:id="previewNumDossier" style="-fx-font-size: 14px; -fx-fill: #2c3e50; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
-                            <Text style="-fx-font-size: 14px; -fx-fill: #29517d; -fx-font-weight: bold;" text="ملف م.ق رقم :" />
+                        <HBox alignment="CENTER_RIGHT" spacing="8.0" style="-fx-padding: 2 0 2 0;">
+                            <Text fx:id="previewNumDossier" style="-fx-font-size: 13px; -fx-fill: #2c3e50; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
+                            <Text style="-fx-font-size: 13px; -fx-fill: #29517d; -fx-font-weight: bold;" text="ملف م.ق رقم :" />
                         </HBox>
 
-                        <!-- Ligne 2 : رقم المراسلة -->
-                        <HBox alignment="CENTER_RIGHT" spacing="10.0" style="-fx-padding: 3 0 3 0;">
-                            <Text fx:id="previewNumMessagerie" style="-fx-font-size: 14px; -fx-fill: #2c3e50; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
-                            <Text style="-fx-font-size: 14px; -fx-fill: #29517d; -fx-font-weight: bold;" text="رقم المراسلة :" />
+                        <HBox alignment="CENTER_RIGHT" spacing="8.0" style="-fx-padding: 2 0 2 0;">
+                            <Text fx:id="previewNumMessagerie" style="-fx-font-size: 13px; -fx-fill: #2c3e50; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
+                            <Text style="-fx-font-size: 13px; -fx-fill: #29517d; -fx-font-weight: bold;" text="رقم المراسلة :" />
                         </HBox>
 
-                        <!-- Ligne 3 : المصدر -->
-                        <HBox alignment="CENTER_RIGHT" spacing="10.0" style="-fx-padding: 3 0 3 0;">
-                            <Text fx:id="previewSource" style="-fx-font-size: 14px; -fx-fill: #2c3e50; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
-                            <Text style="-fx-font-size: 14px; -fx-fill: #29517d; -fx-font-weight: bold;" text="المصدر :" />
+                        <HBox alignment="CENTER_RIGHT" spacing="8.0" style="-fx-padding: 2 0 2 0;">
+                            <Text fx:id="previewSource" style="-fx-font-size: 13px; -fx-fill: #2c3e50; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
+                            <Text style="-fx-font-size: 13px; -fx-fill: #29517d; -fx-font-weight: bold;" text="المصدر :" />
                         </HBox>
 
-                        <!-- Ligne 4 : المحامي -->
-                        <HBox alignment="CENTER_RIGHT" spacing="10.0" style="-fx-padding: 3 0 3 0;">
-                            <Text fx:id="previewAvocat" style="-fx-font-size: 14px; -fx-fill: #2c3e50; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
-                            <Text style="-fx-font-size: 14px; -fx-fill: #29517d; -fx-font-weight: bold;" text="المحامي :" />
+                        <HBox alignment="CENTER_RIGHT" spacing="8.0" style="-fx-padding: 2 0 2 0;">
+                            <Text fx:id="previewAvocat" style="-fx-font-size: 13px; -fx-fill: #2c3e50; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
+                            <Text style="-fx-font-size: 13px; -fx-fill: #29517d; -fx-font-weight: bold;" text="المحامي :" />
                         </HBox>
 
-                        <!-- Ligne 5 : الفائدة -->
-                        <HBox alignment="CENTER_RIGHT" spacing="10.0" style="-fx-padding: 3 0 3 0;">
-                            <Text fx:id="previewInteret" style="-fx-font-size: 14px; -fx-fill: #2c3e50; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
-                            <Text style="-fx-font-size: 14px; -fx-fill: #29517d; -fx-font-weight: bold;" text="الفائدة :" />
+                        <HBox alignment="CENTER_RIGHT" spacing="8.0" style="-fx-padding: 2 0 2 0;">
+                            <Text fx:id="previewInteret" style="-fx-font-size: 13px; -fx-fill: #2c3e50; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
+                            <Text style="-fx-font-size: 13px; -fx-fill: #29517d; -fx-font-weight: bold;" text="الفائدة :" />
                         </HBox>
 
-                        <!-- Ligne 6 : المبلغ -->
-                        <HBox alignment="CENTER_RIGHT" spacing="10.0" style="-fx-padding: 3 0 3 0;">
-                            <Text fx:id="previewMontant" style="-fx-font-size: 14px; -fx-fill: #2c3e50; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
-                            <Text style="-fx-font-size: 14px; -fx-fill: #29517d; -fx-font-weight: bold;" text="المبلغ :" />
+                        <HBox alignment="CENTER_RIGHT" spacing="8.0" style="-fx-padding: 2 0 2 0;">
+                            <Text fx:id="previewMontant" style="-fx-font-size: 13px; -fx-fill: #2c3e50; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
+                            <Text style="-fx-font-size: 13px; -fx-fill: #29517d; -fx-font-weight: bold;" text="المبلغ :" />
                         </HBox>
 
-                        <!-- Ligne 7 : ملف عدد -->
-                        <HBox alignment="CENTER_RIGHT" spacing="10.0" style="-fx-padding: 3 0 3 0;">
-                            <Text fx:id="previewReferences" style="-fx-font-size: 14px; -fx-fill: #2c3e50; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
-                            <Text style="-fx-font-size: 14px; -fx-fill: #29517d; -fx-font-weight: bold;" text="ملف عدد :" />
+                        <HBox alignment="CENTER_RIGHT" spacing="8.0" style="-fx-padding: 2 0 2 0;">
+                            <Text fx:id="previewReferences" style="-fx-font-size: 13px; -fx-fill: #2c3e50; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
+                            <Text style="-fx-font-size: 13px; -fx-fill: #29517d; -fx-font-weight: bold;" text="ملف عدد :" />
                         </HBox>
 
-                        <!-- Ligne 8 : حكم او قرار عدد -->
-                        <HBox alignment="CENTER_RIGHT" spacing="10.0" style="-fx-padding: 3 0 3 0;">
-                            <Text fx:id="previewDecision" style="-fx-font-size: 14px; -fx-fill: #2c3e50; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
-                            <Text style="-fx-font-size: 14px; -fx-fill: #29517d; -fx-font-weight: bold;" text="حكم او قرار عدد :" />
+                        <HBox alignment="CENTER_RIGHT" spacing="8.0" style="-fx-padding: 2 0 2 0;">
+                            <Text fx:id="previewDecision" style="-fx-font-size: 13px; -fx-fill: #2c3e50; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
+                            <Text style="-fx-font-size: 13px; -fx-fill: #29517d; -fx-font-weight: bold;" text="حكم او قرار عدد :" />
                         </HBox>
 
-                        <!-- Ligne 9 : التاريخ المقرر -->
-                        <HBox alignment="CENTER_RIGHT" spacing="10.0" style="-fx-padding: 3 0 3 0;">
-                            <Text fx:id="previewDate" style="-fx-font-size: 14px; -fx-fill: #2c3e50; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
-                            <Text style="-fx-font-size: 14px; -fx-fill: #29517d; -fx-font-weight: bold;" text="التاريخ المقرر :" />
+                        <HBox alignment="CENTER_RIGHT" spacing="8.0" style="-fx-padding: 2 0 2 0;">
+                            <Text fx:id="previewDate" style="-fx-font-size: 13px; -fx-fill: #2c3e50; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
+                            <Text style="-fx-font-size: 13px; -fx-fill: #29517d; -fx-font-weight: bold;" text="التاريخ المقرر :" />
                         </HBox>
 
-                        <!-- Ligne 10 : مراجع المراسلة -->
-                        <HBox alignment="CENTER_RIGHT" spacing="10.0" style="-fx-padding: 3 0 3 0;">
-                            <Text fx:id="previewStatutDetail" style="-fx-font-size: 14px; -fx-fill: #2c3e50; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
-                            <Text style="-fx-font-size: 14px; -fx-fill: #29517d; -fx-font-weight: bold;" text="مراجع المراسلة :" />
+                        <HBox alignment="CENTER_RIGHT" spacing="8.0" style="-fx-padding: 2 0 2 0;">
+                            <Text fx:id="previewStatutDetail" style="-fx-font-size: 13px; -fx-fill: #2c3e50; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
+                            <Text style="-fx-font-size: 13px; -fx-fill: #29517d; -fx-font-weight: bold;" text="مراجع المراسلة :" />
                         </HBox>
 
-                        <!-- Ligne 11 : حالة المراسلة -->
-                        <HBox alignment="CENTER_RIGHT" spacing="10.0" style="-fx-padding: 3 0 3 0;">
-                            <Text fx:id="previewStatut" style="-fx-font-size: 14px; -fx-fill: #27ae60; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
-                            <Text style="-fx-font-size: 14px; -fx-fill: #29517d; -fx-font-weight: bold;" text="حالة المراسلة :" />
+                        <HBox alignment="CENTER_RIGHT" spacing="8.0" style="-fx-padding: 2 0 2 0;">
+                            <Text fx:id="previewStatut" style="-fx-font-size: 13px; -fx-fill: #27ae60; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
+                            <Text style="-fx-font-size: 13px; -fx-fill: #29517d; -fx-font-weight: bold;" text="حالة المراسلة :" />
                         </HBox>
 
-                        <!-- Ligne 12 : حالة الملف -->
-                        <HBox alignment="CENTER_RIGHT" spacing="10.0" style="-fx-padding: 3 0 3 0;">
-                            <Text fx:id="previewEtat" style="-fx-font-size: 14px; -fx-fill: #2c3e50; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
-                            <Text style="-fx-font-size: 14px; -fx-fill: #29517d; -fx-font-weight: bold;" text="حالة الملف :" />
+                        <HBox alignment="CENTER_RIGHT" spacing="8.0" style="-fx-padding: 2 0 2 0;">
+                            <Text fx:id="previewEtat" style="-fx-font-size: 13px; -fx-fill: #2c3e50; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" />
+                            <Text style="-fx-font-size: 13px; -fx-fill: #29517d; -fx-font-weight: bold;" text="حالة الملف :" />
                         </HBox>
 
-                        <!-- Ligne 13 : الملاحظات -->
-                        <VBox spacing="5.0" style="-fx-padding: 10 0 0 0;">
-                            <Text style="-fx-font-size: 14px; -fx-fill: #29517d; -fx-font-weight: bold;" text="الملاحظات :" />
-                            <Text fx:id="previewRemarques" style="-fx-font-size: 14px; -fx-fill: #2c3e50; -fx-padding: 10 15 10 15; -fx-background-color: #f8f9fa; -fx-background-radius: 6; -fx-border-color: #ecf0f1; -fx-border-radius: 6; -fx-border-width: 1; -fx-pref-width: 100%; -fx-min-height: 60px;" />
+                        <!-- الملاحظات -->
+                        <VBox alignment="CENTER_RIGHT" spacing="3.0" style="-fx-padding: 5 0 0 0;">
+                            <Text style="-fx-font-size: 13px; -fx-fill: #29517d; -fx-font-weight: bold;" text="الملاحظات :" />
+                            <Text fx:id="previewRemarques" wrappingWidth="700" textAlignment="RIGHT" style="-fx-font-size: 13px; -fx-fill: #2c3e50; -fx-padding: 10 12 10 12; -fx-background-color: #f8f9fa; -fx-background-radius: 6; -fx-border-color: #ecf0f1; -fx-border-radius: 6; -fx-border-width: 1; -fx-min-height: 50px;" />
                         </VBox>
 
                     </VBox>
 
                     <!-- ========== PIED DE PAGE ========== -->
-                    <VBox alignment="CENTER" spacing="3.0" style="-fx-padding: 15 0 0 0; -fx-border-color: #ecf0f1; -fx-border-width: 2 0 0 0;">
-                        <Text style="-fx-font-size: 10px; -fx-fill: #bdc3c7;" text="تم إنشاء هذا التقرير بواسطة نظام خبير الملفات" />
-                        <Text fx:id="previewFooterDate" style="-fx-font-size: 10px; -fx-fill: #bdc3c7;" text="تاريخ الإنشاء : 2026-07-17 14:30" />
+                    <VBox alignment="CENTER" spacing="2.0" style="-fx-padding: 10 0 0 0; -fx-border-color: #ecf0f1; -fx-border-width: 2 0 0 0;">
+                        <Text style="-fx-font-size: 9px; -fx-fill: #bdc3c7;" text="تم إنشاء هذا التقرير بواسطة نظام خبير الملفات" />
+                        <Text fx:id="previewFooterDate" style="-fx-font-size: 9px; -fx-fill: #bdc3c7;" text="تاريخ الإنشاء : 2026-07-17 14:30" />
                     </VBox>
 
                 </VBox>
 
                 <!-- ======================================================== -->
-                <!-- BOUTONS : Imprimer + Notifier                           -->
+                <!-- BOUTONS : Exporter + Notifier                           -->
                 <!-- ======================================================== -->
-                <HBox alignment="CENTER" spacing="20.0" style="-fx-padding: 20 0 10 0;">
+                <HBox alignment="CENTER" spacing="20.0" style="-fx-padding: 15 0 5 0;">
 
-                    <Button onAction="#handlePrint" style="-fx-background-color: #2980b9; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 12 30 12 30; -fx-font-size: 15px; -fx-cursor: hand; -fx-effect: dropshadow(three-pass-box, rgba(41,128,185,0.3), 8, 0, 0, 2);" text="🖨️ طباعة">
+                    <Button onAction="#handlePrint" style="-fx-background-color: #2980b9; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 10 25 10 25; -fx-font-size: 14px; -fx-cursor: hand; -fx-effect: dropshadow(three-pass-box, rgba(41,128,185,0.3), 8, 0, 0, 2); -fx-background-insets: 0; -fx-border-width: 0;" text="📤 Exporter">
                         <tooltip>
-                            <Tooltip text="طباعة الملف" />
+                            <Tooltip text="تصدير الملف" />
                         </tooltip>
                     </Button>
 
-                    <Button onAction="#handleNotify" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 12 30 12 30; -fx-font-size: 15px; -fx-cursor: hand; -fx-effect: dropshadow(three-pass-box, rgba(39,174,96,0.3), 8, 0, 0, 2);" text="📧 إشعار">
+                    <Button onAction="#handleNotify" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 10 25 10 25; -fx-font-size: 14px; -fx-cursor: hand; -fx-effect: dropshadow(three-pass-box, rgba(39,174,96,0.3), 8, 0, 0, 2); -fx-background-insets: 0; -fx-border-width: 0;" text="📧 إشعار">
                         <tooltip>
                             <Tooltip text="إرسال إشعار" />
                         </tooltip>
@@ -177,7 +167,7 @@
     <!-- ============================================================ -->
     <bottom>
         <HBox spacing="12.0" style="-fx-background-color: #2c3e50; -fx-padding: 4 15 4 15;">
-            <Text fx:id="statusLabel" style="-fx-font-size: 11px; -fx-fill: #ecf0f1;" text="✅ جاهز للطباعة" />
+            <Text fx:id="statusLabel" style="-fx-font-size: 11px; -fx-fill: #ecf0f1;" text="✅ جاهز للتصدير" />
             <Text style="-fx-font-size: 11px; -fx-fill: #7f8c8d;" text="|" />
             <Text fx:id="recordCountLabel" style="-fx-font-size: 11px; -fx-fill: #ecf0f1;" text="ملف : D2024-001" />
         </HBox>

@@ -134,7 +134,7 @@ public class LoginController implements Initializable {
 
             try {
                 scene.getStylesheets().add(
-                        getClass().getResource("/com/DRJ/dossierexpert/css/style.css").toExternalForm()
+                        getClass().getResource("/com/DRJ/dossierexpert/views/css/style.css").toExternalForm()
                 );
             } catch (Exception e) {
                 // CSS non trouvé

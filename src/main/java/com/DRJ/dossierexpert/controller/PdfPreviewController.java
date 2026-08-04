@@ -2,15 +2,29 @@ package com.DRJ.dossierexpert.controller;
 
 import com.DRJ.dossierexpert.model.Dossier;
 import com.DRJ.dossierexpert.utils.SessionManager;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.image.WritableImage;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.pdf.PdfWriter;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
@@ -41,6 +55,7 @@ public class PdfPreviewController implements Initializable {
     @FXML private Text previewRemarques;
     @FXML private Text previewEtat;
     @FXML private Text previewFooterDate;
+    @FXML private VBox printNode;
 
     private Dossier currentDossier;
 
@@ -48,7 +63,6 @@ public class PdfPreviewController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         System.out.println("✅ PdfPreviewController initialisé");
 
-        // Date de création du rapport
         previewFooterDate.setText("تاريخ الإنشاء : " +
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
     }
@@ -77,20 +91,13 @@ public class PdfPreviewController implements Initializable {
         }
     }
 
-    /**
-     * Définit le dossier à afficher dans l'aperçu
-     *
-     * @param dossier Le dossier à afficher
-     */
     public void setDossier(Dossier dossier) {
         this.currentDossier = dossier;
         System.out.println("✅ Dossier reçu dans PdfPreviewController : " + (dossier != null ? dossier.getNumDossier() : "null"));
 
         if (dossier != null) {
-            // Numéro du dossier dans la barre de titre
             dossierNumberLabel.setText("ملف رقم : " + dossier.getNumDossier());
 
-            // Remplir les champs d'aperçu
             previewNumDossier.setText(dossier.getNumDossier() != null ? dossier.getNumDossier() : "—");
             previewNumMessagerie.setText(dossier.getNumMessagerie() != null ? dossier.getNumMessagerie() : "—");
             previewSource.setText(dossier.getSource() != null ? dossier.getSource() : "—");
@@ -104,7 +111,6 @@ public class PdfPreviewController implements Initializable {
             previewRemarques.setText(dossier.getRemarques() != null ? dossier.getRemarques() : "لا توجد ملاحظات");
             previewEtat.setText(dossier.isEtatDossier() ? "نشط" : "غير نشط");
 
-            // Couleur du statut
             if ("prêt".equals(dossier.getStatut())) {
                 previewStatut.setStyle("-fx-fill: #27ae60; -fx-font-weight: bold; -fx-font-size: 13px;");
                 previewStatut.setText("جاهز");
@@ -119,48 +125,138 @@ public class PdfPreviewController implements Initializable {
             }
 
             System.out.println("✅ Aperçu chargé pour le dossier : " + dossier.getNumDossier());
-        } else {
-            System.out.println("⚠️ Dossier null dans PdfPreviewController");
         }
     }
 
     // ==================== ACTIONS ====================
 
     /**
-     * Action d'impression du dossier
+     * ✅ Export PDF avec snapshot
      */
     @FXML
     private void handlePrint() {
         if (currentDossier == null) {
-            showAlert("⚠️ تنبيه", "لا يوجد ملف للطباعة");
+            showAlert("⚠️ تنبيه", "لا يوجد ملف للتصدير");
             return;
         }
 
         try {
             if (bottomBarController != null) {
-                bottomBarController.showProcessing("جاري الطباعة...");
+                bottomBarController.showProcessing("جاري التصدير...");
             }
 
-            // Simuler l'impression
-            // printService.printDossier(currentDossier);
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("تصدير الملف كـ PDF");
+            fileChooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("PDF Files", "*.pdf")
+            );
+            fileChooser.setInitialFileName("dossier_" + currentDossier.getNumDossier() + ".pdf");
+
+            File file = fileChooser.showSaveDialog(dossierNumberLabel.getScene().getWindow());
+            if (file == null) {
+                if (bottomBarController != null) {
+                    bottomBarController.setStatus("⏹️ تم إلغاء التصدير");
+                }
+                return;
+            }
+
+            if (!file.getName().toLowerCase().endsWith(".pdf")) {
+                file = new File(file.getAbsolutePath() + ".pdf");
+            }
+
+            // Forcer le layout avant le snapshot
+            printNode.applyCss();
+            printNode.layout();
+
+            WritableImage snapshot = printNode.snapshot(new SnapshotParameters(), null);
+            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(snapshot, null);
+
+            try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                 FileOutputStream outputStream = new FileOutputStream(file)) {
+                ImageIO.write(bufferedImage, "png", baos);
+                baos.flush();
+
+                Document document = new Document(PageSize.A4, 36, 36, 36, 36);
+                PdfWriter.getInstance(document, outputStream);
+                document.open();
+
+                Image pdfImage = Image.getInstance(baos.toByteArray());
+                float availableWidth = PageSize.A4.getWidth() - document.leftMargin() - document.rightMargin();
+                float availableHeight = PageSize.A4.getHeight() - document.topMargin() - document.bottomMargin();
+                pdfImage.scaleToFit(availableWidth, availableHeight);
+                pdfImage.setAlignment(Image.ALIGN_CENTER);
+
+                document.add(pdfImage);
+                document.close();
+            }
 
             if (bottomBarController != null) {
-                bottomBarController.setStatusSuccess("تم إرسال الملف إلى الطابعة");
+                bottomBarController.setStatusSuccess("تم تصدير الملف بنجاح");
             }
-            showAlert("✅ نجاح", "تم إرسال الملف إلى الطابعة بنجاح");
+            showAlert("✅ نجاح", "تم تصدير الملف بنجاح\n" + file.getAbsolutePath());
 
         } catch (Exception e) {
             e.printStackTrace();
             if (bottomBarController != null) {
                 bottomBarController.setStatusError("Erreur: " + e.getMessage());
             }
-            showAlert("❌ خطأ", "Erreur lors de l'impression: " + e.getMessage());
+            showAlert("❌ خطأ", "Erreur lors de l'export: " + e.getMessage());
         }
     }
 
     /**
-     * Action de notification
+     * ✅ Exporter en image (alternative)
      */
+    @FXML
+    private void handleExportAsImage() {
+        if (currentDossier == null) {
+            showAlert("⚠️ تنبيه", "لا يوجد ملف للتصدير");
+            return;
+        }
+
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Exporter le dossier");
+            fileChooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("PNG Image", "*.png")
+            );
+            fileChooser.setInitialFileName("dossier_" + currentDossier.getNumDossier() + ".png");
+
+            File file = fileChooser.showSaveDialog(dossierNumberLabel.getScene().getWindow());
+
+            if (file != null) {
+                if (bottomBarController != null) {
+                    bottomBarController.showProcessing("جاري التصدير...");
+                }
+
+                // Capturer le noeud
+                WritableImage snapshot = printNode.snapshot(new SnapshotParameters(), null);
+
+                // Convertir en BufferedImage
+                BufferedImage bufferedImage = new BufferedImage(
+                        (int) snapshot.getWidth(),
+                        (int) snapshot.getHeight(),
+                        BufferedImage.TYPE_INT_ARGB
+                );
+
+                // Sauvegarder
+                ImageIO.write(bufferedImage, "png", file);
+
+                if (bottomBarController != null) {
+                    bottomBarController.setStatusSuccess("تم تصدير الملف كصورة");
+                }
+                showAlert("✅ نجاح", "تم تصدير الملف بنجاح !\n" + file.getAbsolutePath());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (bottomBarController != null) {
+                bottomBarController.setStatusError("Erreur: " + e.getMessage());
+            }
+            showAlert("❌ خطأ", "Erreur lors de l'export: " + e.getMessage());
+        }
+    }
+
     @FXML
     private void handleNotify() {
         if (currentDossier == null) {
@@ -172,9 +268,6 @@ public class PdfPreviewController implements Initializable {
             if (bottomBarController != null) {
                 bottomBarController.showProcessing("جاري إرسال الإشعار...");
             }
-
-            // Simuler l'envoi de notification
-            // notificationService.sendNotification(currentDossier);
 
             if (bottomBarController != null) {
                 bottomBarController.setStatusSuccess("تم إرسال الإشعار");
@@ -190,41 +283,6 @@ public class PdfPreviewController implements Initializable {
         }
     }
 
-    /**
-     * Action d'export du dossier
-     */
-    @FXML
-    private void handleExport() {
-        if (currentDossier == null) {
-            showAlert("⚠️ تنبيه", "لا يوجد ملف للتصدير");
-            return;
-        }
-
-        try {
-            if (bottomBarController != null) {
-                bottomBarController.showProcessing("جاري التصدير...");
-            }
-
-            // Simuler l'export
-            // exportService.exportDossier(currentDossier);
-
-            if (bottomBarController != null) {
-                bottomBarController.setStatusSuccess("تم تصدير الملف");
-            }
-            showAlert("✅ نجاح", "تم تصدير الملف بنجاح");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            if (bottomBarController != null) {
-                bottomBarController.setStatusError("Erreur: " + e.getMessage());
-            }
-            showAlert("❌ خطأ", "Erreur lors de l'export: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Retour à la page principale
-     */
     @FXML
     private void handleBack() {
         try {
@@ -234,7 +292,6 @@ public class PdfPreviewController implements Initializable {
             );
             Scene scene = new Scene(loader.load());
 
-            // Passer l'utilisateur au MainController
             MainController mainController = loader.getController();
             SessionManager session = SessionManager.getInstance();
             if (session.hasActiveSession()) {
@@ -253,9 +310,6 @@ public class PdfPreviewController implements Initializable {
         }
     }
 
-    /**
-     * Déconnexion
-     */
     @FXML
     private void handleLogout() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
