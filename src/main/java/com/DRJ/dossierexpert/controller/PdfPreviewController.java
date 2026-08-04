@@ -1,11 +1,13 @@
 package com.DRJ.dossierexpert.controller;
 
 import com.DRJ.dossierexpert.model.Dossier;
+import com.DRJ.dossierexpert.service.WordPrintService;
+import com.DRJ.dossierexpert.service.WordTemplateService;
 import com.DRJ.dossierexpert.utils.SessionManager;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -15,16 +17,9 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.pdf.PdfWriter;
-
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
@@ -131,10 +126,10 @@ public class PdfPreviewController implements Initializable {
     // ==================== ACTIONS ====================
 
     /**
-     * ✅ Export PDF avec snapshot
+     * ✅ Exporter en Word à partir du template
      */
     @FXML
-    private void handlePrint() {
+    private void handleExport() {
         if (currentDossier == null) {
             showAlert("⚠️ تنبيه", "لا يوجد ملف للتصدير");
             return;
@@ -145,55 +140,41 @@ public class PdfPreviewController implements Initializable {
                 bottomBarController.showProcessing("جاري التصدير...");
             }
 
+            // 1. Choisir le fichier de sortie
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("تصدير الملف كـ PDF");
+            fileChooser.setTitle("Enregistrer le rapport");
             fileChooser.getExtensionFilters().add(
-                    new FileChooser.ExtensionFilter("PDF Files", "*.pdf")
+                new FileChooser.ExtensionFilter("Word Document", "*.docx")
             );
-            fileChooser.setInitialFileName("dossier_" + currentDossier.getNumDossier() + ".pdf");
+            fileChooser.setInitialFileName("dossier_" + currentDossier.getNumDossier() + ".docx");
 
             File file = fileChooser.showSaveDialog(dossierNumberLabel.getScene().getWindow());
-            if (file == null) {
-                if (bottomBarController != null) {
-                    bottomBarController.setStatus("⏹️ تم إلغاء التصدير");
+
+            if (file != null) {
+                // 2. Générer le Word à partir du template
+                WordTemplateService templateService = WordTemplateService.getInstance();
+                boolean success = templateService.generateWordFromTemplate(
+                    currentDossier,
+                    file.getAbsolutePath()
+                );
+
+                if (success) {
+                    // 3. Ouvrir le fichier Word
+                    WordPrintService printService = new WordPrintService();
+                    printService.openWordFile(file.getAbsolutePath());
+
+                    if (bottomBarController != null) {
+                        bottomBarController.setStatusSuccess("تم تصدير الملف بنجاح");
+                    }
+                    showAlert("✅ نجاح", "تم تصدير الملف بنجاح !\n" + file.getAbsolutePath());
+                } else {
+                    showAlert("❌ خطأ", "Erreur lors de la génération du fichier Word");
                 }
-                return;
+            } else {
+                if (bottomBarController != null) {
+                    bottomBarController.setStatus("⏹️ Annulé par l'utilisateur");
+                }
             }
-
-            if (!file.getName().toLowerCase().endsWith(".pdf")) {
-                file = new File(file.getAbsolutePath() + ".pdf");
-            }
-
-            // Forcer le layout avant le snapshot
-            printNode.applyCss();
-            printNode.layout();
-
-            WritableImage snapshot = printNode.snapshot(new SnapshotParameters(), null);
-            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(snapshot, null);
-
-            try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                 FileOutputStream outputStream = new FileOutputStream(file)) {
-                ImageIO.write(bufferedImage, "png", baos);
-                baos.flush();
-
-                Document document = new Document(PageSize.A4, 36, 36, 36, 36);
-                PdfWriter.getInstance(document, outputStream);
-                document.open();
-
-                Image pdfImage = Image.getInstance(baos.toByteArray());
-                float availableWidth = PageSize.A4.getWidth() - document.leftMargin() - document.rightMargin();
-                float availableHeight = PageSize.A4.getHeight() - document.topMargin() - document.bottomMargin();
-                pdfImage.scaleToFit(availableWidth, availableHeight);
-                pdfImage.setAlignment(Image.ALIGN_CENTER);
-
-                document.add(pdfImage);
-                document.close();
-            }
-
-            if (bottomBarController != null) {
-                bottomBarController.setStatusSuccess("تم تصدير الملف بنجاح");
-            }
-            showAlert("✅ نجاح", "تم تصدير الملف بنجاح\n" + file.getAbsolutePath());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -205,7 +186,62 @@ public class PdfPreviewController implements Initializable {
     }
 
     /**
-     * ✅ Exporter en image (alternative)
+     * ✅ Impression directe via Word
+     */
+    @FXML
+    private void handlePrint() {
+        if (currentDossier == null) {
+            showAlert("⚠️ تنبيه", "لا يوجد ملف للطباعة");
+            return;
+        }
+
+        try {
+            if (bottomBarController != null) {
+                bottomBarController.showProcessing("جاري الطباعة...");
+            }
+
+            // 1. Créer un fichier temporaire
+            String tempDir = System.getProperty("java.io.tmpdir");
+            String fileName = "dossier_" + currentDossier.getNumDossier() + ".docx";
+            String filePath = tempDir + File.separator + fileName;
+
+            // 2. Générer le Word
+            WordTemplateService templateService = WordTemplateService.getInstance();
+            boolean success = templateService.generateWordFromTemplate(
+                currentDossier,
+                filePath
+            );
+
+            if (success) {
+                // 3. Imprimer directement
+                WordPrintService printService = new WordPrintService();
+                boolean printed = printService.printWordFile(filePath);
+
+                if (printed) {
+                    if (bottomBarController != null) {
+                        bottomBarController.setStatusSuccess("تم طباعة الملف بنجاح");
+                    }
+                    showAlert("✅ نجاح", "تم طباعة الملف بنجاح");
+                } else {
+                    // Fallback : ouvrir le fichier
+                    printService.openWordFile(filePath);
+                    showAlert("ℹ️ Information", "Le fichier Word a été ouvert, vous pouvez l'imprimer manuellement");
+                }
+            } else {
+                showAlert("❌ خطأ", "Erreur lors de la génération du fichier Word");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (bottomBarController != null) {
+                bottomBarController.setStatusError("Erreur: " + e.getMessage());
+            }
+            showAlert("❌ خطأ", "Erreur lors de l'impression: " + e.getMessage());
+        }
+    }
+
+    /**
+     * ✅ Exporter en image PNG (Alternative)
      */
     @FXML
     private void handleExportAsImage() {
@@ -216,9 +252,9 @@ public class PdfPreviewController implements Initializable {
 
         try {
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Exporter le dossier");
+            fileChooser.setTitle("Exporter le dossier en image");
             fileChooser.getExtensionFilters().add(
-                    new FileChooser.ExtensionFilter("PNG Image", "*.png")
+                new FileChooser.ExtensionFilter("PNG Image", "*.png")
             );
             fileChooser.setInitialFileName("dossier_" + currentDossier.getNumDossier() + ".png");
 
@@ -229,14 +265,14 @@ public class PdfPreviewController implements Initializable {
                     bottomBarController.showProcessing("جاري التصدير...");
                 }
 
-                // Capturer le noeud
+                // Capturer le nœud
                 WritableImage snapshot = printNode.snapshot(new SnapshotParameters(), null);
 
                 // Convertir en BufferedImage
                 BufferedImage bufferedImage = new BufferedImage(
-                        (int) snapshot.getWidth(),
-                        (int) snapshot.getHeight(),
-                        BufferedImage.TYPE_INT_ARGB
+                    (int) snapshot.getWidth(),
+                    (int) snapshot.getHeight(),
+                    BufferedImage.TYPE_INT_ARGB
                 );
 
                 // Sauvegarder
@@ -245,7 +281,7 @@ public class PdfPreviewController implements Initializable {
                 if (bottomBarController != null) {
                     bottomBarController.setStatusSuccess("تم تصدير الملف كصورة");
                 }
-                showAlert("✅ نجاح", "تم تصدير الملف بنجاح !\n" + file.getAbsolutePath());
+                showAlert("✅ نجاح", "تم تصدير الملف كصورة بنجاح !\n" + file.getAbsolutePath());
             }
 
         } catch (Exception e) {
@@ -346,6 +382,16 @@ public class PdfPreviewController implements Initializable {
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
+        
+        // Appliquer le CSS si disponible
+        try {
+            alert.getDialogPane().getStylesheets().add(
+                getClass().getResource("/com/DRJ/dossierexpert/css/style.css").toExternalForm()
+            );
+        } catch (Exception e) {
+            // CSS non trouvé
+        }
+        
         alert.showAndWait();
     }
 
