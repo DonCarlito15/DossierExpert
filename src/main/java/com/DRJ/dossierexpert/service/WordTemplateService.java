@@ -6,9 +6,10 @@ import org.apache.poi.xwpf.usermodel.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,8 +29,17 @@ public class WordTemplateService {
     }
 
     public boolean generateWordFromTemplate(Dossier dossier, String outputPath) {
+        return generateWordFromTemplate(dossier, "templates/template.docx", outputPath);
+    }
+
+    public boolean generateWordFromTemplate(Dossier dossier, String templateResourcePath, String outputPath) {
         if (dossier == null) {
             LOGGER.log(Level.SEVERE, "❌ Dossier est null");
+            return false;
+        }
+
+        if (templateResourcePath == null || templateResourcePath.isEmpty()) {
+            LOGGER.log(Level.SEVERE, "❌ Chemin du template non fourni");
             return false;
         }
 
@@ -40,7 +50,7 @@ public class WordTemplateService {
         try {
             // 1. Charger le template
             templateStream = getClass().getClassLoader()
-                    .getResourceAsStream("templates/template.docx");
+                    .getResourceAsStream(templateResourcePath);
 
             if (templateStream == null) {
                 LOGGER.log(Level.SEVERE, "❌ Template non trouvé !");
@@ -119,8 +129,9 @@ public class WordTemplateService {
         data.put("etat_dossier", dossier.isEtatDossier() ? "نشط" : "غير نشط");
         data.put("remarques", dossier.getRemarques() != null && !dossier.getRemarques().isEmpty()
                 ? dossier.getRemarques() : "لا توجد ملاحظات");
-        data.put("dateCreation", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
-        data.put("date_creation", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+        String dateNow = LocalDate.now().format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.FRENCH));
+        data.put("dateCreation", dateNow);
+        data.put("date_creation", dateNow);
 
         // ✅ Afficher les données pour déboguer
         LOGGER.info("📊 Données préparées :");

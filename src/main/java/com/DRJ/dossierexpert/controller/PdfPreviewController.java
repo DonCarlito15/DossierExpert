@@ -1,6 +1,7 @@
 package com.DRJ.dossierexpert.controller;
 
 import com.DRJ.dossierexpert.model.Dossier;
+import com.DRJ.dossierexpert.model.Personne;
 import com.DRJ.dossierexpert.service.WordPrintService;
 import com.DRJ.dossierexpert.service.WordTemplateService;
 import com.DRJ.dossierexpert.utils.SessionManager;
@@ -22,8 +23,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class PdfPreviewController implements Initializable {
@@ -58,8 +60,8 @@ public class PdfPreviewController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         System.out.println("✅ PdfPreviewController initialisé");
 
-        previewFooterDate.setText("تاريخ الإنشاء : " +
-                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+        String dateNow = LocalDate.now().format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.FRENCH));
+        previewFooterDate.setText("تاريخ الإنشاء : " + dateNow);
     }
 
     // ==================== SETTERS POUR LES BARRES ====================
@@ -140,7 +142,6 @@ public class PdfPreviewController implements Initializable {
                 bottomBarController.showProcessing("جاري التصدير...");
             }
 
-            // 1. Choisir le fichier de sortie
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Enregistrer le rapport");
             fileChooser.getExtensionFilters().add(
@@ -151,7 +152,6 @@ public class PdfPreviewController implements Initializable {
             File file = fileChooser.showSaveDialog(dossierNumberLabel.getScene().getWindow());
 
             if (file != null) {
-                // 2. Générer le Word à partir du template
                 WordTemplateService templateService = WordTemplateService.getInstance();
                 boolean success = templateService.generateWordFromTemplate(
                     currentDossier,
@@ -159,7 +159,6 @@ public class PdfPreviewController implements Initializable {
                 );
 
                 if (success) {
-                    // 3. Ouvrir le fichier Word
                     WordPrintService printService = new WordPrintService();
                     printService.openWordFile(file.getAbsolutePath());
 
@@ -200,12 +199,10 @@ public class PdfPreviewController implements Initializable {
                 bottomBarController.showProcessing("جاري الطباعة...");
             }
 
-            // 1. Créer un fichier temporaire
             String tempDir = System.getProperty("java.io.tmpdir");
             String fileName = "dossier_" + currentDossier.getNumDossier() + ".docx";
             String filePath = tempDir + File.separator + fileName;
 
-            // 2. Générer le Word
             WordTemplateService templateService = WordTemplateService.getInstance();
             boolean success = templateService.generateWordFromTemplate(
                 currentDossier,
@@ -213,7 +210,6 @@ public class PdfPreviewController implements Initializable {
             );
 
             if (success) {
-                // 3. Imprimer directement
                 WordPrintService printService = new WordPrintService();
                 boolean printed = printService.printWordFile(filePath);
 
@@ -223,7 +219,6 @@ public class PdfPreviewController implements Initializable {
                     }
                     showAlert("✅ نجاح", "تم طباعة الملف بنجاح");
                 } else {
-                    // Fallback : ouvrir le fichier
                     printService.openWordFile(filePath);
                     showAlert("ℹ️ Information", "Le fichier Word a été ouvert, vous pouvez l'imprimer manuellement");
                 }
@@ -265,17 +260,14 @@ public class PdfPreviewController implements Initializable {
                     bottomBarController.showProcessing("جاري التصدير...");
                 }
 
-                // Capturer le nœud
                 WritableImage snapshot = printNode.snapshot(new SnapshotParameters(), null);
 
-                // Convertir en BufferedImage
                 BufferedImage bufferedImage = new BufferedImage(
                     (int) snapshot.getWidth(),
                     (int) snapshot.getHeight(),
                     BufferedImage.TYPE_INT_ARGB
                 );
 
-                // Sauvegarder
                 ImageIO.write(bufferedImage, "png", file);
 
                 if (bottomBarController != null) {
@@ -293,6 +285,13 @@ public class PdfPreviewController implements Initializable {
         }
     }
 
+    // ================================================================
+    // ✅ NOUVEAU : handleNotify() AVEC GÉNÉRATION WORD
+    // ================================================================
+
+    /**
+     * ✅ Envoyer une notification (génère un Word depuis notification-template.docx)
+     */
     @FXML
     private void handleNotify() {
         if (currentDossier == null) {
@@ -305,19 +304,64 @@ public class PdfPreviewController implements Initializable {
                 bottomBarController.showProcessing("جاري إرسال الإشعار...");
             }
 
-            if (bottomBarController != null) {
-                bottomBarController.setStatusSuccess("تم إرسال الإشعار");
+            // 1. Récupérer le destinataire (utilisateur connecté)
+            SessionManager session = SessionManager.getInstance();
+            Personne destinataire = session.getCurrentPersonne();
+
+            if (destinataire == null) {
+                showAlert("⚠️ تنبيه", "Aucun destinataire trouvé");
+                return;
             }
-            showAlert("✅ نجاح", "تم إرسال الإشعار بنجاح");
+
+            // 2. Ouvrir le dialogue de sauvegarde
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Enregistrer la notification");
+            fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Word Document", "*.docx")
+            );
+            fileChooser.setInitialFileName("notification_" + currentDossier.getNumDossier() + ".docx");
+
+            File file = fileChooser.showSaveDialog(dossierNumberLabel.getScene().getWindow());
+
+            if (file != null) {
+                // 3. Générer la notification Word depuis Dossiertemplate.docx
+                WordTemplateService templateService = WordTemplateService.getInstance();
+                boolean success = templateService.generateWordFromTemplate(
+                    currentDossier,
+                    "templates/Dossiertemplate.docx",
+                    file.getAbsolutePath()
+                );
+
+                if (success) {
+                    // 4. Ouvrir le fichier généré
+                    WordPrintService printService = new WordPrintService();
+                    printService.openWordFile(file.getAbsolutePath());
+
+                    if (bottomBarController != null) {
+                        bottomBarController.setStatusSuccess("تم إرسال الإشعار بنجاح");
+                    }
+                    showAlert("✅ نجاح", "تم إرسال الإشعار بنجاح !\n" + file.getAbsolutePath());
+                } else {
+                    showAlert("❌ خطأ", "Erreur lors de la génération de la notification");
+                }
+            } else {
+                if (bottomBarController != null) {
+                    bottomBarController.setStatus("⏹️ Annulé par l'utilisateur");
+                }
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
             if (bottomBarController != null) {
                 bottomBarController.setStatusError("Erreur: " + e.getMessage());
             }
-            showAlert("❌ خطأ", "Erreur lors de l'envoi de l'notification: " + e.getMessage());
+            showAlert("❌ خطأ", "Erreur lors de l'envoi de la notification: " + e.getMessage());
         }
     }
+
+    // ================================================================
+    // FIN DE LA MODIFICATION
+    // ================================================================
 
     @FXML
     private void handleBack() {
@@ -383,7 +427,6 @@ public class PdfPreviewController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(message);
         
-        // Appliquer le CSS si disponible
         try {
             alert.getDialogPane().getStylesheets().add(
                 getClass().getResource("/com/DRJ/dossierexpert/css/style.css").toExternalForm()
