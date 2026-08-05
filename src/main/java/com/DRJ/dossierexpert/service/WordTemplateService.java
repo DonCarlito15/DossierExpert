@@ -132,6 +132,8 @@ public class WordTemplateService {
         String dateNow = LocalDate.now().format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.FRENCH));
         data.put("dateCreation", dateNow);
         data.put("date_creation", dateNow);
+        // Alias en minuscule pour compatibilité avec les templates utilisant {datecreation}
+        data.put("datecreation", dateNow);
 
         // ✅ Afficher les données pour déboguer
         LOGGER.info("📊 Données préparées :");
