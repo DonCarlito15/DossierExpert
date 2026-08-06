@@ -2,6 +2,7 @@ package com.DRJ.dossierexpert.controller;
 
 import com.DRJ.dossierexpert.model.Dossier;
 import com.DRJ.dossierexpert.model.Personne;
+import com.DRJ.dossierexpert.service.DossierService;
 import com.DRJ.dossierexpert.service.WordPrintService;
 import com.DRJ.dossierexpert.service.WordTemplateService;
 import com.DRJ.dossierexpert.utils.SessionManager;
@@ -11,6 +12,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.VBox;
@@ -33,6 +35,9 @@ public class PdfPreviewController implements Initializable {
     // ==================== RÉFÉRENCES AUX BARRES ====================
     private TopBarController topBarController;
     private BottomBarController bottomBarController;
+
+    // ==================== SERVICES ====================
+    private DossierService dossierService;
 
     // ==================== TOP BAR ====================
     @FXML private Text dossierNumberLabel;
@@ -59,6 +64,9 @@ public class PdfPreviewController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         System.out.println("✅ PdfPreviewController initialisé");
+
+        // Initialisation du service
+        dossierService = new DossierService();
 
         String dateNow = LocalDate.now().format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.FRENCH));
         previewFooterDate.setText("تاريخ الإنشاء : " + dateNow);
@@ -145,7 +153,7 @@ public class PdfPreviewController implements Initializable {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Enregistrer le rapport");
             fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Word Document", "*.docx")
+                    new FileChooser.ExtensionFilter("Word Document", "*.docx")
             );
             fileChooser.setInitialFileName("dossier_" + currentDossier.getNumDossier() + ".docx");
 
@@ -154,8 +162,8 @@ public class PdfPreviewController implements Initializable {
             if (file != null) {
                 WordTemplateService templateService = WordTemplateService.getInstance();
                 boolean success = templateService.generateWordFromTemplate(
-                    currentDossier,
-                    file.getAbsolutePath()
+                        currentDossier,
+                        file.getAbsolutePath()
                 );
 
                 if (success) {
@@ -205,8 +213,8 @@ public class PdfPreviewController implements Initializable {
 
             WordTemplateService templateService = WordTemplateService.getInstance();
             boolean success = templateService.generateWordFromTemplate(
-                currentDossier,
-                filePath
+                    currentDossier,
+                    filePath
             );
 
             if (success) {
@@ -249,7 +257,7 @@ public class PdfPreviewController implements Initializable {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Exporter le dossier en image");
             fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("PNG Image", "*.png")
+                    new FileChooser.ExtensionFilter("PNG Image", "*.png")
             );
             fileChooser.setInitialFileName("dossier_" + currentDossier.getNumDossier() + ".png");
 
@@ -263,9 +271,9 @@ public class PdfPreviewController implements Initializable {
                 WritableImage snapshot = printNode.snapshot(new SnapshotParameters(), null);
 
                 BufferedImage bufferedImage = new BufferedImage(
-                    (int) snapshot.getWidth(),
-                    (int) snapshot.getHeight(),
-                    BufferedImage.TYPE_INT_ARGB
+                        (int) snapshot.getWidth(),
+                        (int) snapshot.getHeight(),
+                        BufferedImage.TYPE_INT_ARGB
                 );
 
                 ImageIO.write(bufferedImage, "png", file);
@@ -285,12 +293,8 @@ public class PdfPreviewController implements Initializable {
         }
     }
 
-    // ================================================================
-    // ✅ NOUVEAU : handleNotify() AVEC GÉNÉRATION WORD
-    // ================================================================
-
     /**
-     * ✅ Envoyer une notification (génère un Word depuis notification-template.docx)
+     * ✅ Envoyer une notification (génère un Word depuis Dossiertemplate.docx)
      */
     @FXML
     private void handleNotify() {
@@ -304,7 +308,6 @@ public class PdfPreviewController implements Initializable {
                 bottomBarController.showProcessing("جاري إرسال الإشعار...");
             }
 
-            // 1. Récupérer le destinataire (utilisateur connecté)
             SessionManager session = SessionManager.getInstance();
             Personne destinataire = session.getCurrentPersonne();
 
@@ -313,27 +316,24 @@ public class PdfPreviewController implements Initializable {
                 return;
             }
 
-            // 2. Ouvrir le dialogue de sauvegarde
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Enregistrer la notification");
             fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Word Document", "*.docx")
+                    new FileChooser.ExtensionFilter("Word Document", "*.docx")
             );
             fileChooser.setInitialFileName("notification_" + currentDossier.getNumDossier() + ".docx");
 
             File file = fileChooser.showSaveDialog(dossierNumberLabel.getScene().getWindow());
 
             if (file != null) {
-                // 3. Générer la notification Word depuis Dossiertemplate.docx
                 WordTemplateService templateService = WordTemplateService.getInstance();
                 boolean success = templateService.generateWordFromTemplate(
-                    currentDossier,
-                    "templates/Dossiertemplate.docx",
-                    file.getAbsolutePath()
+                        currentDossier,
+                        "templates/Dossiertemplate.docx",
+                        file.getAbsolutePath()
                 );
 
                 if (success) {
-                    // 4. Ouvrir le fichier généré
                     WordPrintService printService = new WordPrintService();
                     printService.openWordFile(file.getAbsolutePath());
 
@@ -356,6 +356,64 @@ public class PdfPreviewController implements Initializable {
                 bottomBarController.setStatusError("Erreur: " + e.getMessage());
             }
             showAlert("❌ خطأ", "Erreur lors de l'envoi de la notification: " + e.getMessage());
+        }
+    }
+
+    // ================================================================
+    // ✅ NOUVEAU : SUPPRESSION DE DOSSIER
+    // ================================================================
+
+    /**
+     * ✅ Supprimer le dossier définitivement
+     */
+    @FXML
+    private void handleDelete() {
+        if (currentDossier == null) {
+            showAlert("⚠️ تنبيه", "لا يوجد ملف للحذف");
+            return;
+        }
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("تأكيد الحذف");
+        alert.setHeaderText("⚠️ حذف نهائي");
+        alert.setContentText("هل أنت متأكد de vouloir supprimer définitivement le dossier " + currentDossier.getNumDossier() + " ?\nCette action est irréversible !");
+
+        ButtonType supprimerButton = new ButtonType("🗑️ Supprimer", ButtonBar.ButtonData.OK_DONE);
+        ButtonType annulerButton = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().setAll(supprimerButton, annulerButton);
+
+        try {
+            alert.getDialogPane().getStylesheets().add(
+                    getClass().getResource("/com/DRJ/dossierexpert/css/style.css").toExternalForm()
+            );
+        } catch (Exception e) {
+            // CSS non trouvé
+        }
+
+        if (alert.showAndWait().get() == supprimerButton) {
+            try {
+                boolean deleted = dossierService.deleteDossier(currentDossier.getId());
+
+                if (deleted) {
+                    if (bottomBarController != null) {
+                        bottomBarController.setStatusSuccess("تم حذف الملف نهائياً");
+                    }
+                    showAlert("✅ نجاح", "تم حذف الملف نهائياً");
+
+                    // Fermer la fenêtre d'aperçu
+                    Stage stage = (Stage) dossierNumberLabel.getScene().getWindow();
+                    stage.close();
+
+                } else {
+                    showAlert("❌ خطأ", "Impossible de supprimer le fichier");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                if (bottomBarController != null) {
+                    bottomBarController.setStatusError("Erreur: " + e.getMessage());
+                }
+                showAlert("❌ خطأ", "Erreur lors de la suppression: " + e.getMessage());
+            }
         }
     }
 
@@ -426,15 +484,15 @@ public class PdfPreviewController implements Initializable {
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
-        
+
         try {
             alert.getDialogPane().getStylesheets().add(
-                getClass().getResource("/com/DRJ/dossierexpert/css/style.css").toExternalForm()
+                    getClass().getResource("/com/DRJ/dossierexpert/css/style.css").toExternalForm()
             );
         } catch (Exception e) {
             // CSS non trouvé
         }
-        
+
         alert.showAndWait();
     }
 
