@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Locale;
@@ -53,7 +54,7 @@ public class WordTemplateService {
                     .getResourceAsStream(templateResourcePath);
 
             if (templateStream == null) {
-                LOGGER.log(Level.SEVERE, "❌ Template non trouvé !");
+                LOGGER.log(Level.SEVERE, "❌ Template non trouvé : " + templateResourcePath);
                 return false;
             }
 
@@ -65,7 +66,6 @@ public class WordTemplateService {
 
             // 3. Remplacer les balises en conservant le style
             replaceAllPlaceholders(document, data);
-            // Remplacer aussi dans les en-têtes et pieds de page
             replaceInHeadersAndFooters(document, data);
 
             // 4. Sauvegarder
@@ -100,42 +100,106 @@ public class WordTemplateService {
     }
 
     /**
-     * ✅ Prépare les données (arabe et français)
+     * ✅ Prépare toutes les données pour le template
      */
     private Map<String, String> prepareData(Dossier dossier) {
         Map<String, String> data = new HashMap<>();
 
-        // Données en français (ajout d'alias pour compatibilité avec différents templates)
+        // ================================================================
+        // 1. DONNÉES DU DOSSIER
+        // ================================================================
+        
+        // Numéro de dossier (plusieurs formats)
         data.put("numDossier", getValue(dossier.getNumDossier()));
         data.put("num_dossier", getValue(dossier.getNumDossier()));
+        
+        // Numéro de messagerie
         data.put("numMessage", getValue(dossier.getNumMessagerie()));
         data.put("numMessagerie", getValue(dossier.getNumMessagerie()));
+        
+        // Source
         data.put("source", getValue(dossier.getSource()));
+        
+        // Avocat
         data.put("avocat", getValue(dossier.getAvocat()));
+        
+        // Intérêt
         data.put("interest", dossier.getLInteret() != null ? String.format("%.2f", dossier.getLInteret()) : "0.00");
         data.put("interet", dossier.getLInteret() != null ? String.format("%.2f", dossier.getLInteret()) : "0.00");
+        
+        // Montant
         data.put("montant", dossier.getMontant() != null ? String.format("%.2f", dossier.getMontant()) : "0.00");
+        
+        // Références
         data.put("references", getValue(dossier.getReferencesMessagerie()));
+        
+        // Décision
         data.put("decision", getValue(dossier.getDecision()));
+        
+        // Date du dossier
         data.put("date", getValue(dossier.getDateDossier()));
         data.put("dateDossier", getValue(dossier.getDateDossier()));
+        
+        // Statut (ENUM)
         data.put("statut", getValue(dossier.getStatut()));
-
-        // Données en arabe
+        
+        // Statut en arabe
         String statutArabe = "prêt".equals(dossier.getStatut()) ? "جاهز" : "غير جاهز";
         data.put("statutArabe", statutArabe);
         data.put("statut_arabe", statutArabe);
+        
+        // État du dossier
         data.put("etatDossier", dossier.isEtatDossier() ? "نشط" : "غير نشط");
         data.put("etat_dossier", dossier.isEtatDossier() ? "نشط" : "غير نشط");
+        
+        // Remarques
         data.put("remarques", dossier.getRemarques() != null && !dossier.getRemarques().isEmpty()
                 ? dossier.getRemarques() : "لا توجد ملاحظات");
-        String dateNow = LocalDate.now().format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.FRENCH));
-        data.put("dateCreation", dateNow);
-        data.put("date_creation", dateNow);
-        // Alias en minuscule pour compatibilité avec les templates utilisant {datecreation}
-        data.put("datecreation", dateNow);
 
-        // ✅ Afficher les données pour déboguer
+        // ================================================================
+        // 2. DATES (Plusieurs formats pour compatibilité)
+        // ================================================================
+        
+        LocalDate today = LocalDate.now();
+        LocalDateTime now = LocalDateTime.now();
+        
+        // Format: 05-08-2026 (date du jour demandée)
+        String dateFormatDash = today.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+        data.put("date", dateFormatDash);
+        data.put("dateCreation", dateFormatDash);
+        data.put("date_creation", dateFormatDash);
+        data.put("datecreation", dateFormatDash);
+        data.put("dateCreationFr", dateFormatDash);
+
+        // Format: 05/08/2026
+        String dateFormatSlash = today.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        data.put("dateNow", dateFormatSlash);
+
+        // Format: 5 août 2026 (français)
+        String dateFormatFrench = today.format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.FRENCH));
+        data.put("dateCreationFrancais", dateFormatFrench);
+        data.put("dateNowFr", dateFormatFrench);
+
+        // Format: 05 August 2026 (anglais)
+        String dateFormatEnglish = today.format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH));
+        data.put("dateCreationEn", dateFormatEnglish);
+
+        // Format: 05 أغسطس 2026 (arabe)
+        String dateFormatArabic = today.format(DateTimeFormatter.ofPattern("d MMMM yyyy", new Locale("ar")));
+        data.put("dateCreationArabe", dateFormatArabic);
+
+        // Format: 2026-08-05 (standard international)
+        String dateFormatIso = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        data.put("dateCreationIso", dateFormatIso);
+
+        // Format avec heure: 05/08/2026 14:30
+        String dateTimeFormat = now.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+        data.put("dateCreationHeure", dateTimeFormat);
+
+        // ================================================================
+        // 3. LOGS DE DÉBOGAGE
+        // ================================================================
+        
         LOGGER.info("📊 Données préparées :");
         for (Map.Entry<String, String> entry : data.entrySet()) {
             LOGGER.info("   {" + entry.getKey() + "} = " + entry.getValue());
@@ -148,12 +212,10 @@ public class WordTemplateService {
      * ✅ Remplace toutes les balises dans le document
      */
     private void replaceAllPlaceholders(XWPFDocument document, Map<String, String> data) {
-        // Remplacer dans les paragraphes
         for (XWPFParagraph paragraph : document.getParagraphs()) {
             replaceInParagraph(paragraph, data);
         }
 
-        // Remplacer dans les tableaux (y compris tableaux imbriqués)
         for (XWPFTable table : document.getTables()) {
             replaceInTable(table, data);
         }
@@ -192,12 +254,12 @@ public class WordTemplateService {
                 }
             }
         } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "Erreur pendant le remplacement dans entetes/pieds", e);
+            LOGGER.log(Level.WARNING, "Erreur dans en-têtes/pieds", e);
         }
     }
 
     /**
-     * ✅ Remplace les balises en conservant le style original du template
+     * ✅ Remplace les balises en conservant le style original
      */
     private void replaceInParagraph(XWPFParagraph paragraph, Map<String, String> data) {
         // 1. Récupérer tout le texte du paragraphe
@@ -257,11 +319,11 @@ public class WordTemplateService {
                 paragraph.removeRun(0);
             }
 
-            // ✅ Créer un nouveau run avec le même style
+            // Créer un nouveau run avec le même style
             XWPFRun newRun = paragraph.createRun();
             newRun.setText(newText);
 
-            // ✅ Si le texte contient de l'arabe, aligner à droite
+            // Si le texte contient de l'arabe, aligner à droite
             if (containsArabic(newText)) {
                 try {
                     paragraph.setAlignment(ParagraphAlignment.RIGHT);
@@ -270,7 +332,7 @@ public class WordTemplateService {
                 }
             }
 
-            // ✅ Réappliquer le style original
+            // Réappliquer le style original
             newRun.setBold(isBold);
             newRun.setItalic(isItalic);
             newRun.setFontSize(fontSize);

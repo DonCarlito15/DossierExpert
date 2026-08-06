@@ -266,11 +266,51 @@ public class DossierFormController implements Initializable {
         stage.close();
     }
 
+    // ================================================================
+    // ✅ MODIFICATION UNIQUEMENT ICI : SUPPRESSION DÉFINITIVE
+    // ================================================================
+
     @FXML
     private void handleClear() {
-        clearForm();
-        showStatus("🗑️ تم مسح النموذج", "info");
+        // Si c'est un nouveau dossier (non sauvegardé), juste effacer les champs
+        if (isNewDossier || currentDossier == null) {
+            clearForm();
+            showStatus("🗑️ تم مسح النموذج", "info");
+            return;
+        }
+
+        // ✅ Pour un dossier existant : SUPPRESSION DÉFINITIVE
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("تأكيد الحذف");
+        alert.setHeaderText("⚠️ حذف نهائي");
+        alert.setContentText("هل أنت متأكد de vouloir supprimer définitivement le dossier " + currentDossier.getNumDossier() + " ?\nCette action est irréversible !");
+
+        ButtonType supprimerButton = new ButtonType("🗑️ Supprimer", ButtonBar.ButtonData.OK_DONE);
+        ButtonType annulerButton = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().setAll(supprimerButton, annulerButton);
+
+        if (alert.showAndWait().get() == supprimerButton) {
+            try {
+                boolean deleted = dossierService.deleteDossier(currentDossier.getId());
+                if (deleted) {
+                    showStatus("✅ تم حذف الملف نهائياً", "success");
+                    if (mainController != null) {
+                        mainController.loadData(); // Rafraîchir le tableau
+                    }
+                    handleClose(); // Fermer le formulaire
+                } else {
+                    showStatus("❌ Impossible de supprimer le fichier", "error");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                showStatus("❌ Erreur lors de la suppression : " + e.getMessage(), "error");
+            }
+        }
     }
+
+    // ================================================================
+    // FIN DE LA MODIFICATION
+    // ================================================================
 
     private void clearForm() {
         numDossierField.clear();
