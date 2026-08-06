@@ -25,7 +25,7 @@
             <Text style="-fx-fill: #7f8c8d; -fx-font-size: 16px;" text="|" />
             <Text fx:id="dossierNumberLabel" style="-fx-fill: #ecf0f1; -fx-font-size: 13px;" text="ملف رقم : D2024-001" />
             <Region HBox.hgrow="ALWAYS" />
-            <Button onAction="#handleBack" style="-fx-background-color: #c0392b; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 15 6 15; -fx-cursor: hand;" text="🔙 رجوع" />
+            <Button onAction="#handleClose" style="-fx-background-color: #c0392b; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 6 15 6 15; -fx-cursor: hand;" text="✖ إغلاق" />
         </HBox>
     </top>
 
@@ -144,7 +144,7 @@
                 <!-- ======================================================== -->
                 <HBox alignment="CENTER" spacing="20.0" style="-fx-padding: 15 0 5 0;">
 
-                    <Button onAction="#handleExport" style="-fx-background-color: #2980b9; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 10 25 10 25; -fx-font-size: 14px; -fx-cursor: hand; -fx-effect: dropshadow(three-pass-box, rgba(41,128,185,0.3), 8, 0, 0, 2); -fx-background-insets: 0; -fx-border-width: 0;" text="📤 Exporter PDF">
+                    <Button onAction="#handleExport" style="-fx-background-color: #2980b9; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 10 25 10 25; -fx-font-size: 14px; -fx-cursor: hand; -fx-effect: dropshadow(three-pass-box, rgba(41,128,185,0.3), 8, 0, 0, 2); -fx-background-insets: 0; -fx-border-width: 0;" text="📤 Exporter ">
                         <tooltip>
                             <Tooltip text="تصدير الملف" />
                         </tooltip>
