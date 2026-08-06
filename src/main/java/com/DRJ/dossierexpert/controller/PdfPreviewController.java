@@ -418,35 +418,22 @@ public class PdfPreviewController implements Initializable {
     }
 
     // ================================================================
-    // FIN DE LA MODIFICATION
+    // ✅ MODIFICATION : handleBack() ferme simplement le popup
     // ================================================================
 
+    /**
+     * ✅ Ferme la fenêtre d'aperçu sans retourner à la page principale
+     */
     @FXML
     private void handleBack() {
-        try {
-            Stage stage = (Stage) dossierNumberLabel.getScene().getWindow();
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/DRJ/dossierexpert/views/pages/main.fxml")
-            );
-            Scene scene = new Scene(loader.load());
-
-            MainController mainController = loader.getController();
-            SessionManager session = SessionManager.getInstance();
-            if (session.hasActiveSession()) {
-                mainController.setCurrentPersonne(session.getCurrentPersonne());
-            }
-
-            stage.setTitle("📋 خبير الملفات - لوحة التحكم");
-            stage.setScene(scene);
-            stage.setMaximized(true);
-            stage.show();
-
-            System.out.println("✅ Retour à la page principale");
-        } catch (IOException e) {
-            e.printStackTrace();
-            showAlert("❌ خطأ", "Erreur lors du retour à la page principale");
-        }
+        Stage stage = (Stage) dossierNumberLabel.getScene().getWindow();
+        stage.close();
+        System.out.println("✅ Fenêtre d'aperçu fermée");
     }
+
+    // ================================================================
+    // FIN DE LA MODIFICATION
+    // ================================================================
 
     @FXML
     private void handleLogout() {

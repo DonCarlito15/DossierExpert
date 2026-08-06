@@ -149,7 +149,7 @@
 }
 
 .text-area:focused {
-    -fx-border-color: #2c3e50;
+    -fx-border-color: #2c7ccb;
     -fx-border-width: 2;
 }
 
