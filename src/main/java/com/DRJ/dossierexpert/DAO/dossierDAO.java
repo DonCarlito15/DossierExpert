@@ -86,9 +86,13 @@ public class DossierDAO {
         return dossiers;
     }
 
+    /**
+     * ✅ Sauvegarde un dossier avec gestion sécurisée de la date
+     */
     public boolean save(Dossier dossier) throws SQLException {
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS)) {
+            
             stmt.setString(1, dossier.getNumDossier());
             stmt.setString(2, dossier.getNumMessagerie());
             stmt.setString(3, dossier.getSource());
@@ -97,7 +101,20 @@ public class DossierDAO {
             stmt.setBigDecimal(6, dossier.getMontant() != null ? BigDecimal.valueOf(dossier.getMontant()) : null);
             stmt.setString(7, dossier.getDossierNombre());
             stmt.setString(8, dossier.getDecision());
-            stmt.setDate(9, dossier.getDateDossier() != null ? Date.valueOf(dossier.getDateDossier()) : null);
+
+            // ✅ CORRECTION : Gestion sécurisée de la date
+            try {
+                String dateStr = dossier.getDateDossier();
+                if (dateStr != null && !dateStr.trim().isEmpty()) {
+                    stmt.setDate(9, Date.valueOf(dateStr));
+                } else {
+                    stmt.setNull(9, Types.DATE);
+                }
+            } catch (IllegalArgumentException e) {
+                System.err.println("⚠️ Erreur de format de date: " + dossier.getDateDossier() + " - Utilisation de la date null");
+                stmt.setNull(9, Types.DATE);
+            }
+
             stmt.setString(10, dossier.getReferencesMessagerie());
             stmt.setBoolean(11, dossier.isEtatDossier());
             stmt.setString(12, dossier.getRemarques());
@@ -117,9 +134,13 @@ public class DossierDAO {
         }
     }
 
+    /**
+     * ✅ Met à jour un dossier avec gestion sécurisée de la date
+     */
     public boolean update(Dossier dossier) throws SQLException {
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(SQL_UPDATE)) {
+            
             stmt.setString(1, dossier.getNumDossier());
             stmt.setString(2, dossier.getNumMessagerie());
             stmt.setString(3, dossier.getSource());
@@ -128,7 +149,20 @@ public class DossierDAO {
             stmt.setBigDecimal(6, dossier.getMontant() != null ? BigDecimal.valueOf(dossier.getMontant()) : null);
             stmt.setString(7, dossier.getDossierNombre());
             stmt.setString(8, dossier.getDecision());
-            stmt.setDate(9, dossier.getDateDossier() != null ? Date.valueOf(dossier.getDateDossier()) : null);
+
+            // ✅ CORRECTION : Gestion sécurisée de la date
+            try {
+                String dateStr = dossier.getDateDossier();
+                if (dateStr != null && !dateStr.trim().isEmpty()) {
+                    stmt.setDate(9, Date.valueOf(dateStr));
+                } else {
+                    stmt.setNull(9, Types.DATE);
+                }
+            } catch (IllegalArgumentException e) {
+                System.err.println("⚠️ Erreur de format de date: " + dossier.getDateDossier() + " - Utilisation de la date null");
+                stmt.setNull(9, Types.DATE);
+            }
+
             stmt.setString(10, dossier.getReferencesMessagerie());
             stmt.setBoolean(11, dossier.isEtatDossier());
             stmt.setString(12, dossier.getRemarques());
@@ -214,8 +248,15 @@ public class DossierDAO {
         if (montant != null) dossier.setMontant(montant.doubleValue());
         dossier.setDossierNombre(rs.getString("dossier_nombre"));
         dossier.setDecision(rs.getString("decision"));
+        
+        // ✅ Récupération de la date
         Date date = rs.getDate("date_dossier");
-        if (date != null) dossier.setDateDossier(date.toString());
+        if (date != null) {
+            dossier.setDateDossier(date.toString());
+        } else {
+            dossier.setDateDossier(null);
+        }
+        
         dossier.setReferencesMessagerie(rs.getString("references_messagerie"));
         dossier.setEtatDossier(rs.getBoolean("etat_dossier"));
         dossier.setRemarques(rs.getString("remarques"));

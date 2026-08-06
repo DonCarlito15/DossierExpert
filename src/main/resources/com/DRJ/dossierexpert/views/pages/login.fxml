@@ -52,7 +52,7 @@
                 </VBox>
 
                 <!-- Lien Mot de passe oublié -->
-                <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                <HBox spacing="10.0">
                     <Hyperlink style="-fx-text-fill: #3498db; -fx-font-size: 12px;" text="نسيت كلمة المرور ؟" />
                 </HBox>
             </VBox>
@@ -80,4 +80,3 @@
     </bottom>
 
 </BorderPane>
-

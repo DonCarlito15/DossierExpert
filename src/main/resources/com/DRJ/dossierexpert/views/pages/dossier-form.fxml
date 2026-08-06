@@ -132,7 +132,6 @@
                         <Button fx:id="saveButton" onAction="#handleSave" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 10 25 10 25; -fx-font-size: 14px; -fx-cursor: hand; -fx-background-insets: 0; -fx-border-width: 0;" text="Enregistrer " />
                         <Button onAction="#handlePrint" style="-fx-background-color: #2980b9; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 10 25 10 25; -fx-font-size: 14px; -fx-cursor: hand; -fx-background-insets: 0; -fx-border-width: 0;" text="Imprimer " />
                         <Button onAction="#handleClear" style="-fx-background-color: #f39c12; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 10 25 10 25; -fx-font-size: 14px; -fx-cursor: hand; -fx-background-insets: 0; -fx-border-width: 0;" text="   Supprimer ️" />
-                        <Button onAction="#handleCancel" style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 10 25 10 25; -fx-font-size: 14px; -fx-cursor: hand; -fx-background-insets: 0; -fx-border-width: 0;" text="Annuler" />
                     </HBox>
                 </VBox>
 
