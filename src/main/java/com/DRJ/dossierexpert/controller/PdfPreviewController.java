@@ -360,7 +360,7 @@ public class PdfPreviewController implements Initializable {
     }
 
     // ================================================================
-    // ✅ NOUVEAU : SUPPRESSION DE DOSSIER
+    // ✅ SUPPRESSION DE DOSSIER
     // ================================================================
 
     /**
@@ -418,21 +418,29 @@ public class PdfPreviewController implements Initializable {
     }
 
     // ================================================================
-    // ✅ MODIFICATION : handleBack() ferme simplement le popup
+    // ✅ FERMETURE DE LA FENÊTRE
     // ================================================================
 
     /**
-     * ✅ Ferme la fenêtre d'aperçu sans retourner à la page principale
+     * ✅ Ferme la fenêtre d'aperçu (appelée par le bouton "✖ إغلاق")
      */
     @FXML
-    private void handleBack() {
+    private void handleClose() {
         Stage stage = (Stage) dossierNumberLabel.getScene().getWindow();
         stage.close();
         System.out.println("✅ Fenêtre d'aperçu fermée");
     }
 
+    /**
+     * ✅ Ferme la fenêtre d'aperçu (alias pour compatibilité)
+     */
+    @FXML
+    private void handleBack() {
+        handleClose();
+    }
+
     // ================================================================
-    // FIN DE LA MODIFICATION
+    // FIN DES MODIFICATIONS
     // ================================================================
 
     @FXML

@@ -26,7 +26,7 @@ public class SearchController implements Initializable {
     // ==================== RÉFÉRENCES ====================
     private TopBarController topBarController;
     private BottomBarController bottomBarController;
-    private MainController mainController;  // ✅ Changé de MainLayoutController à MainController
+    private MainController mainController;
 
     // ==================== COMPOSANTS ====================
     @FXML private ComboBox<String> searchCriteriaCombo;
@@ -111,7 +111,6 @@ public class SearchController implements Initializable {
         this.bottomBarController = bottomBarController;
     }
 
-    // ✅ MODIFIÉ : Accepte MainController au lieu de MainLayoutController
     public void setMainController(MainController mainController) {
         this.mainController = mainController;
         System.out.println("✅ MainController injecté dans SearchController");
@@ -239,10 +238,8 @@ public class SearchController implements Initializable {
     @FXML
     private void handleBack() {
         if (mainController != null) {
-            // ✅ Fermer la fenêtre de recherche
             Stage stage = (Stage) searchField.getScene().getWindow();
             stage.close();
-            // Rafraîchir le tableau principal
             mainController.loadData();
             if (mainController.getBottomBarController() != null) {
                 mainController.getBottomBarController().setStatusInfo("🔍 Retour à la page principale");
@@ -265,7 +262,21 @@ public class SearchController implements Initializable {
         }
     }
 
-    // ==================== DÉCONNEXION ====================
+    // ================================================================
+    // ✅ AJOUT : handleClose() pour fermer la fenêtre
+    // ================================================================
+
+    /**
+     * ✅ Ferme la fenêtre de recherche
+     */
+    @FXML
+    private void handleClose() {
+        Stage stage = (Stage) searchField.getScene().getWindow();
+        stage.close();
+        System.out.println("✅ Fenêtre de recherche fermée");
+    }
+
+    // ================================================================
 
     @FXML
     private void handleLogout() {
