@@ -178,7 +178,7 @@
                     <HBox nodeOrientation="RIGHT_TO_LEFT" spacing="10.0" style="-fx-padding: 8 0 0 0;">
                         <Button onAction="#handleSave" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 8 20 8 20; -fx-font-size: 13px; -fx-cursor: hand; -fx-background-insets: 0; -fx-border-width: 0;" text="Enregistrer" />
                         <Button onAction="#handlePrint" style="-fx-background-color: #2980b9; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 8 20 8 20; -fx-font-size: 13px; -fx-cursor: hand; -fx-background-insets: 0; -fx-border-width: 0;" text="Imprimer" />
-                        <Button onAction="#handleClear" style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 8 20 8 20; -fx-font-size: 13px; -fx-cursor: hand; -fx-background-insets: 0; -fx-border-width: 0;" text="🗑️ مسح" />
+                        <Button onAction="#handleClear" style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 8 20 8 20; -fx-font-size: 13px; -fx-cursor: hand; -fx-background-insets: 0; -fx-border-width: 0;" text="Supprimer" />
                     </HBox>
 
                 </VBox>
@@ -189,8 +189,6 @@
     <!-- ============================================================ -->
     <!-- BOTTOM : BARRE DE STATUT                                      -->
     <!-- ============================================================ -->
-    <bottom>
-        <fx:include source="../components/bottom-bar.fxml" fx:id="bottomBar" />
-    </bottom>
+    
 
 </BorderPane>

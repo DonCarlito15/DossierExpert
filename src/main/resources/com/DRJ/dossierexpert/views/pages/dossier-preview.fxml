@@ -150,7 +150,7 @@
                         </tooltip>
                     </Button>
 
-                    <Button onAction="#handleNotify" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 10 25 10 25; -fx-font-size: 14px; -fx-cursor: hand; -fx-effect: dropshadow(three-pass-box, rgba(39,174,96,0.3), 8, 0, 0, 2); -fx-background-insets: 0; -fx-border-width: 0;" text="📧 إشعار">
+                    <Button onAction="#handleNotify" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 10 25 10 25; -fx-font-size: 14px; -fx-cursor: hand; -fx-effect: dropshadow(three-pass-box, rgba(39,174,96,0.3), 8, 0, 0, 2); -fx-background-insets: 0; -fx-border-width: 0;" text="📧 Notifier">
                         <tooltip>
                             <Tooltip text="إرسال إشعار" />
                         </tooltip>
