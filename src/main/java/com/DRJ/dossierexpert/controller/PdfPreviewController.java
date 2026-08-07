@@ -8,7 +8,6 @@ import com.DRJ.dossierexpert.service.WordPrintService;
 import com.DRJ.dossierexpert.service.WordTemplateService;
 import com.DRJ.dossierexpert.utils.SessionManager;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
@@ -112,7 +111,14 @@ public class PdfPreviewController implements Initializable {
             previewMontant.setText(dossier.getMontant() != null ? String.format("%.2f", dossier.getMontant()) : "0.00");
             previewReferences.setText(dossier.getReferencesMessagerie() != null ? dossier.getReferencesMessagerie() : "—");
             previewDecision.setText(dossier.getDecision() != null ? dossier.getDecision() : "—");
-            previewDate.setText(dossier.getDateDossier() != null ? dossier.getDateDossier() : "—");
+            
+            // ✅ Afficher la date LocalDate correctement
+            if (dossier.getDateDossier() != null) {
+                previewDate.setText(dossier.getDateDossier().toString());
+            } else {
+                previewDate.setText("—");
+            }
+            
             previewStatutDetail.setText(dossier.getStatut() != null ? dossier.getStatut() : "—");
             previewRemarques.setText(dossier.getRemarques() != null ? dossier.getRemarques() : "لا توجد ملاحظات");
             previewEtat.setText(dossier.isEtatDossier() ? "نشط" : "غير نشط");
@@ -385,7 +391,7 @@ public class PdfPreviewController implements Initializable {
 
         try {
             alert.getDialogPane().getStylesheets().add(
-                    getClass().getResource("/com/DRJ/dossierexpert/css/style.css").toExternalForm()
+                    getClass().getResource("/com/DRJ/dossierexpert/views/css/style.css").toExternalForm()
             );
         } catch (Exception e) {
             // CSS non trouvé
@@ -471,7 +477,7 @@ public class PdfPreviewController implements Initializable {
 
         try {
             alert.getDialogPane().getStylesheets().add(
-                    getClass().getResource("/com/DRJ/dossierexpert/css/style.css").toExternalForm()
+                    getClass().getResource("/com/DRJ/dossierexpert/views/css/style.css").toExternalForm()
             );
         } catch (Exception e) {
             // CSS non trouvé

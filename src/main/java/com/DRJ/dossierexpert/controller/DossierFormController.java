@@ -11,6 +11,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
 public class DossierFormController implements Initializable {
@@ -89,7 +91,13 @@ public class DossierFormController implements Initializable {
         montantField.setText(dossier.getMontant() != null ? String.valueOf(dossier.getMontant()) : "");
         referencesField.setText(dossier.getReferencesMessagerie());
         decisionField.setText(dossier.getDecision());
-        dateField.setText(dossier.getDateDossier());
+        
+        // ✅ Afficher la date LocalDate correctement
+        if (dossier.getDateDossier() != null) {
+            dateField.setText(dossier.getDateDossier().toString());
+        } else {
+            dateField.setText("");
+        }
 
         if (dossier.getStatut() != null) {
             if ("prêt".equals(dossier.getStatut())) {
@@ -124,7 +132,18 @@ public class DossierFormController implements Initializable {
 
         dossier.setReferencesMessagerie(referencesField.getText().trim());
         dossier.setDecision(decisionField.getText().trim());
-        dossier.setDateDossier(dateField.getText().trim());
+        
+        // ✅ Gérer la date depuis le champ texte
+        String dateStr = dateField.getText().trim();
+        if (!dateStr.isEmpty()) {
+            try {
+                dossier.setDateDossier(LocalDate.parse(dateStr));
+            } catch (Exception e) {
+                dossier.setDateDossier(LocalDate.now());
+            }
+        } else {
+            dossier.setDateDossier(LocalDate.now());
+        }
 
         String statutValue = etatComboBox.getValue();
         if ("جاهز".equals(statutValue)) {
@@ -267,7 +286,7 @@ public class DossierFormController implements Initializable {
     }
 
     // ================================================================
-    // ✅ MODIFICATION UNIQUEMENT ICI : SUPPRESSION DÉFINITIVE
+    // ✅ SUPPRESSION DÉFINITIVE
     // ================================================================
 
     @FXML
@@ -308,10 +327,6 @@ public class DossierFormController implements Initializable {
         }
     }
 
-    // ================================================================
-    // FIN DE LA MODIFICATION
-    // ================================================================
-
     private void clearForm() {
         numDossierField.clear();
         numMessagerieField.clear();
@@ -328,7 +343,6 @@ public class DossierFormController implements Initializable {
     }
 
     private boolean hasUnsavedChanges() {
-        // Vérification simplifiée
         Dossier dossier = getDossierFromForm();
         return dossier != null &&
                 (!dossier.getNumDossier().isEmpty() ||

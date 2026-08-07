@@ -1,4 +1,4 @@
-package com.DRJ.dossierexpert.DAO;  // ✅ Package en minuscules
+package com.DRJ.dossierexpert.DAO;
 
 import com.DRJ.dossierexpert.model.Personne;
 import com.DRJ.dossierexpert.utils.DatabaseConnection;
@@ -9,8 +9,6 @@ import java.util.List;
 
 public class PersonnelDAO {
 
-    // ==================== REQUÊTES SQL ====================
-
     private static final String SQL_FIND_ALL = "SELECT * FROM personnels ORDER BY nom, prenom";
     private static final String SQL_FIND_BY_ID = "SELECT * FROM personnels WHERE id = ?";
     private static final String SQL_FIND_BY_EMAIL = "SELECT * FROM personnels WHERE email = ?";
@@ -20,21 +18,15 @@ public class PersonnelDAO {
     private static final String SQL_COUNT = "SELECT COUNT(*) FROM personnels";
     private static final String SQL_COUNT_ACTIVE = "SELECT COUNT(*) FROM personnels WHERE est_actif = TRUE";
 
-    // ==================== CONNEXION ====================
-
     private Connection getConnection() throws SQLException {
         return DatabaseConnection.getInstance().getConnection();
     }
 
-    // ==================== CRUD ====================
-
     public List<Personne> findAll() throws SQLException {
         List<Personne> personnes = new ArrayList<>();
-
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(SQL_FIND_ALL)) {
-
             while (rs.next()) {
                 personnes.add(mapResultSetToPersonne(rs));
             }
@@ -45,9 +37,7 @@ public class PersonnelDAO {
     public Personne findById(Long id) throws SQLException {
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(SQL_FIND_BY_ID)) {
-
             stmt.setLong(1, id);
-
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return mapResultSetToPersonne(rs);
@@ -60,9 +50,7 @@ public class PersonnelDAO {
     public Personne findByEmail(String email) throws SQLException {
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(SQL_FIND_BY_EMAIL)) {
-
             stmt.setString(1, email);
-
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return mapResultSetToPersonne(rs);
@@ -75,7 +63,6 @@ public class PersonnelDAO {
     public boolean save(Personne personne) throws SQLException {
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS)) {
-
             stmt.setString(1, personne.getNom());
             stmt.setString(2, personne.getPrenom());
             stmt.setString(3, personne.getEmail());
@@ -84,14 +71,12 @@ public class PersonnelDAO {
             stmt.setString(6, personne.getRole() != null ? personne.getRole() : "UTILISATEUR");
             stmt.setBoolean(7, personne.isEstActif());
 
-            // ✅ Gestion de date_inscription si null
             Timestamp dateInscription = personne.getDateInscription() != null
                     ? Timestamp.valueOf(personne.getDateInscription())
                     : Timestamp.valueOf(java.time.LocalDateTime.now());
             stmt.setTimestamp(8, dateInscription);
 
             int affectedRows = stmt.executeUpdate();
-
             if (affectedRows > 0) {
                 try (ResultSet rs = stmt.getGeneratedKeys()) {
                     if (rs.next()) {
@@ -107,7 +92,6 @@ public class PersonnelDAO {
     public boolean update(Personne personne) throws SQLException {
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(SQL_UPDATE)) {
-
             stmt.setString(1, personne.getNom());
             stmt.setString(2, personne.getPrenom());
             stmt.setString(3, personne.getEmail());
@@ -116,7 +100,6 @@ public class PersonnelDAO {
             stmt.setString(6, personne.getRole());
             stmt.setBoolean(7, personne.isEstActif());
 
-            // ✅ Gestion de dernier_acces si null
             Timestamp dernierAcces = personne.getDernierAcces() != null
                     ? Timestamp.valueOf(personne.getDernierAcces())
                     : null;
@@ -131,15 +114,11 @@ public class PersonnelDAO {
     public boolean delete(Long id) throws SQLException {
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(SQL_DELETE)) {
-
             stmt.setLong(1, id);
-
             int affectedRows = stmt.executeUpdate();
             return affectedRows > 0;
         }
     }
-
-    // ==================== MÉTHODES SPÉCIALES ====================
 
     public boolean existsByEmail(String email) throws SQLException {
         return findByEmail(email) != null;
@@ -153,7 +132,6 @@ public class PersonnelDAO {
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(SQL_COUNT)) {
-
             if (rs.next()) {
                 return rs.getInt(1);
             }
@@ -165,7 +143,6 @@ public class PersonnelDAO {
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(SQL_COUNT_ACTIVE)) {
-
             if (rs.next()) {
                 return rs.getInt(1);
             }
@@ -175,10 +152,8 @@ public class PersonnelDAO {
 
     public void updateDernierAcces(Long id) throws SQLException {
         String query = "UPDATE personnels SET dernier_acces = ? WHERE id = ?";
-
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-
             stmt.setTimestamp(1, Timestamp.valueOf(java.time.LocalDateTime.now()));
             stmt.setLong(2, id);
             stmt.executeUpdate();
@@ -187,10 +162,8 @@ public class PersonnelDAO {
 
     public void setActif(Long id, boolean actif) throws SQLException {
         String query = "UPDATE personnels SET est_actif = ? WHERE id = ?";
-
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-
             stmt.setBoolean(1, actif);
             stmt.setLong(2, id);
             stmt.executeUpdate();
@@ -199,17 +172,13 @@ public class PersonnelDAO {
 
     public void updateRole(Long id, String role) throws SQLException {
         String query = "UPDATE personnels SET role = ? WHERE id = ?";
-
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-
             stmt.setString(1, role);
             stmt.setLong(2, id);
             stmt.executeUpdate();
         }
     }
-
-    // ==================== MAPPING ====================
 
     private Personne mapResultSetToPersonne(ResultSet rs) throws SQLException {
         Personne personne = new Personne();
@@ -219,7 +188,6 @@ public class PersonnelDAO {
         personne.setEmail(rs.getString("email"));
         personne.setMotDePasse(rs.getString("mot_de_passe"));
 
-        // ✅ Gestion des colonnes NULL
         try {
             personne.setTelephone(rs.getString("telephone"));
         } catch (SQLException e) {
@@ -234,7 +202,6 @@ public class PersonnelDAO {
 
         personne.setEstActif(rs.getBoolean("est_actif"));
 
-        // ✅ Gestion de date_inscription si null
         try {
             Timestamp dateInscription = rs.getTimestamp("date_inscription");
             if (dateInscription != null) {
@@ -249,7 +216,6 @@ public class PersonnelDAO {
             personne.setDernierAcces(dernierAcces.toLocalDateTime());
         }
 
-        // ✅ Gestion des colonnes created_at et updated_at
         try {
             personne.setCreatedAt(rs.getString("created_at"));
         } catch (SQLException e) {

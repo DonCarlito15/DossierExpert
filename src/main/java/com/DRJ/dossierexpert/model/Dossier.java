@@ -16,7 +16,7 @@ public class Dossier {
     private Double lInteret;
     private Double montant;
     private String decision;
-    private String dateDossier;
+    private LocalDate dateDossier;  // ✅ Changé en LocalDate
     private String referencesMessagerie;
     private String statut; // "prêt" ou "Pas prêt" (stocké en base)
     private String remarques;
@@ -33,7 +33,7 @@ public class Dossier {
     public Dossier() {
         this.statut = "Pas prêt";
         this.etatDossier = true;
-        this.dateDossier = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE);
+        this.dateDossier = LocalDate.now();
     }
 
     public Dossier(String numDossier, String source, String avocat) {
@@ -81,34 +81,62 @@ public class Dossier {
     public String getDecision() { return decision; }
     public void setDecision(String decision) { this.decision = decision; }
 
-    // ✅ UNE SEULE méthode setDateDossier (String)
-    public String getDateDossier() { return dateDossier; }
-    public void setDateDossier(String dateDossier) { this.dateDossier = dateDossier; }
-
-    // ✅ Méthode utilitaire pour LocalDate (si besoin)
-    public void setDateDossierFromLocalDate(LocalDate date) {
-        this.dateDossier = date != null ? date.format(DateTimeFormatter.ISO_LOCAL_DATE) : null;
+    // ✅ GETTER / SETTER pour LocalDate
+    public LocalDate getDateDossier() { 
+        return dateDossier; 
+    }
+    
+    public void setDateDossier(LocalDate dateDossier) { 
+        this.dateDossier = dateDossier; 
     }
 
-    // ✅ Retourne la date en LocalDate (pour les traitements)
-    public LocalDate getDateDossierAsLocalDate() {
-        if (dateDossier != null && !dateDossier.isEmpty()) {
+    // ✅ Méthode pour setter depuis une String (utile pour l'UI)
+    public void setDateDossierFromString(String dateStr) {
+        if (dateStr != null && !dateStr.trim().isEmpty()) {
             try {
-                return LocalDate.parse(dateDossier);
+                this.dateDossier = LocalDate.parse(dateStr);
             } catch (Exception e) {
-                return null;
+                System.err.println("⚠️ Format de date invalide: " + dateStr);
+                this.dateDossier = LocalDate.now();
             }
+        } else {
+            this.dateDossier = LocalDate.now();
         }
-        return null;
     }
+
+    // ✅ Retourne la date en String (pour l'affichage)
+    public String getDateDossierAsString() {
+        if (dateDossier != null) {
+            return dateDossier.toString(); // Format: YYYY-MM-DD
+        }
+        return "";
+    }
+
+    // ✅ Retourne la date formatée pour l'affichage (DD/MM/YYYY)
+    public String getDateDossierFormatted() {
+        if (dateDossier != null) {
+            return dateDossier.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        }
+        return "";
+    }
+
+    // ✅ Retourne la date formatée pour les templates Word
+    public String getDateDossierForTemplate() {
+        if (dateDossier != null) {
+            return dateDossier.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        }
+        return "";
+    }
+
+    // ============================================================
+    // MÉTHODES SPÉCIFIQUES POUR LES VUES
+    // ============================================================
 
     public String getReferencesMessagerie() { return referencesMessagerie; }
     public void setReferencesMessagerie(String referencesMessagerie) { this.referencesMessagerie = referencesMessagerie; }
 
-    // ✅ UNE SEULE méthode getStatut
     public String getStatut() { return statut; }
 
-    // ✅ setStatut avec conversion arabe
     public void setStatut(String statut) {
         if ("جاهز".equals(statut)) {
             this.statut = "prêt";
@@ -121,7 +149,6 @@ public class Dossier {
         }
     }
 
-    // ✅ Méthode pour afficher le statut en arabe
     public String getStatutArabe() {
         if ("prêt".equals(statut)) {
             return "جاهز";
@@ -230,6 +257,7 @@ public class Dossier {
                 ", avocat='" + avocat + '\'' +
                 ", montant=" + montant +
                 ", statut='" + statut + '\'' +
+                ", dateDossier=" + dateDossier +
                 '}';
     }
 

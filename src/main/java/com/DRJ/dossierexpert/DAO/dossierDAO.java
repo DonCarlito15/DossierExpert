@@ -5,6 +5,7 @@ import com.DRJ.dossierexpert.utils.DatabaseConnection;
 
 import java.math.BigDecimal;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -86,9 +87,6 @@ public class DossierDAO {
         return dossiers;
     }
 
-    /**
-     * ✅ Sauvegarde un dossier avec gestion sécurisée de la date
-     */
     public boolean save(Dossier dossier) throws SQLException {
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS)) {
@@ -102,16 +100,11 @@ public class DossierDAO {
             stmt.setString(7, dossier.getDossierNombre());
             stmt.setString(8, dossier.getDecision());
 
-            // ✅ CORRECTION : Gestion sécurisée de la date
-            try {
-                String dateStr = dossier.getDateDossier();
-                if (dateStr != null && !dateStr.trim().isEmpty()) {
-                    stmt.setDate(9, Date.valueOf(dateStr));
-                } else {
-                    stmt.setNull(9, Types.DATE);
-                }
-            } catch (IllegalArgumentException e) {
-                System.err.println("⚠️ Erreur de format de date: " + dossier.getDateDossier() + " - Utilisation de la date null");
+            // ✅ Gestion correcte de LocalDate
+            LocalDate date = dossier.getDateDossier();
+            if (date != null) {
+                stmt.setDate(9, Date.valueOf(date));
+            } else {
                 stmt.setNull(9, Types.DATE);
             }
 
@@ -134,9 +127,6 @@ public class DossierDAO {
         }
     }
 
-    /**
-     * ✅ Met à jour un dossier avec gestion sécurisée de la date
-     */
     public boolean update(Dossier dossier) throws SQLException {
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(SQL_UPDATE)) {
@@ -150,16 +140,11 @@ public class DossierDAO {
             stmt.setString(7, dossier.getDossierNombre());
             stmt.setString(8, dossier.getDecision());
 
-            // ✅ CORRECTION : Gestion sécurisée de la date
-            try {
-                String dateStr = dossier.getDateDossier();
-                if (dateStr != null && !dateStr.trim().isEmpty()) {
-                    stmt.setDate(9, Date.valueOf(dateStr));
-                } else {
-                    stmt.setNull(9, Types.DATE);
-                }
-            } catch (IllegalArgumentException e) {
-                System.err.println("⚠️ Erreur de format de date: " + dossier.getDateDossier() + " - Utilisation de la date null");
+            // ✅ Gestion correcte de LocalDate
+            LocalDate date = dossier.getDateDossier();
+            if (date != null) {
+                stmt.setDate(9, Date.valueOf(date));
+            } else {
                 stmt.setNull(9, Types.DATE);
             }
 
@@ -249,10 +234,10 @@ public class DossierDAO {
         dossier.setDossierNombre(rs.getString("dossier_nombre"));
         dossier.setDecision(rs.getString("decision"));
         
-        // ✅ Récupération de la date
+        // ✅ Récupération correcte de LocalDate
         Date date = rs.getDate("date_dossier");
         if (date != null) {
-            dossier.setDateDossier(date.toString());
+            dossier.setDateDossier(date.toLocalDate());
         } else {
             dossier.setDateDossier(null);
         }

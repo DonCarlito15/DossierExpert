@@ -22,6 +22,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -72,7 +73,7 @@ public class MainController implements Initializable {
     private FilteredList<Dossier> filteredData;
     private Personne currentPersonne;
     private Stage filterStage;
-    private boolean isLoading = false;  // ✅ Pour éviter les appels multiples
+    private boolean isLoading = false;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -170,7 +171,6 @@ public class MainController implements Initializable {
      * ✅ Charge les données depuis la base de données
      */
     public void loadData() {
-        // ✅ Éviter les appels multiples
         if (isLoading) {
             System.out.println("⚠️ Chargement déjà en cours...");
             return;
@@ -203,7 +203,6 @@ public class MainController implements Initializable {
                 }
             }
 
-            // Initialiser le filtre si nécessaire
             if (filteredData == null) {
                 filteredData = new FilteredList<>(dossierList, p -> true);
             } else {
@@ -216,7 +215,6 @@ public class MainController implements Initializable {
             dossierTable.setItems(sortedData);
             updateCount();
 
-            // ✅ Animation sur le tableau
             AnimationUtils.fadeIn(dossierTable, 500);
 
             if (bottomBarController != null) {
@@ -307,7 +305,14 @@ public class MainController implements Initializable {
         montantField.setText(dossier.getMontant() != null ? String.valueOf(dossier.getMontant()) : "");
         referencesField.setText(dossier.getReferencesMessagerie());
         decisionField.setText(dossier.getDecision());
-        dateField.setText(dossier.getDateDossier() != null ? dossier.getDateDossier() : "");
+        
+        // ✅ Afficher la date LocalDate correctement
+        if (dossier.getDateDossier() != null) {
+            dateField.setText(dossier.getDateDossier().toString());
+        } else {
+            dateField.setText("");
+        }
+        
         statutField.setText(dossier.getStatut());
 
         if (dossier.getStatut() != null) {
@@ -328,7 +333,7 @@ public class MainController implements Initializable {
     }
 
     /**
-     * ✅ Ouvre le formulaire de dossier avec les informations du dossier sélectionné
+     * ✅ Ouvre le formulaire de dossier
      */
     public void openDossierForm(Dossier dossier) {
         try {
@@ -433,7 +438,18 @@ public class MainController implements Initializable {
 
             dossier.setReferencesMessagerie(referencesField.getText().trim());
             dossier.setDecision(decisionField.getText().trim());
-            dossier.setDateDossier(dateField.getText().trim());
+            
+            // ✅ Gérer la date depuis le champ texte
+            String dateStr = dateField.getText().trim();
+            if (!dateStr.isEmpty()) {
+                try {
+                    dossier.setDateDossier(LocalDate.parse(dateStr));
+                } catch (Exception e) {
+                    dossier.setDateDossier(LocalDate.now());
+                }
+            } else {
+                dossier.setDateDossier(LocalDate.now());
+            }
 
             String statutValue = etatComboBox.getValue();
             if ("جاهز".equals(statutValue)) {
@@ -543,14 +559,12 @@ public class MainController implements Initializable {
         remarquesField.clear();
     }
 
-    // ✅ showAlert avec CSS appliqué
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
 
-        // ✅ Appliquer le CSS au DialogPane
         DialogPane dialogPane = alert.getDialogPane();
         try {
             dialogPane.getStylesheets().add(
