@@ -1,5 +1,6 @@
 package com.DRJ.dossierexpert.controller;
 
+import com.DRJ.dossierexpert.MainApplication;
 import com.DRJ.dossierexpert.model.Dossier;
 import com.DRJ.dossierexpert.model.Personne;
 import com.DRJ.dossierexpert.service.DossierService;
@@ -450,25 +451,13 @@ public class PdfPreviewController implements Initializable {
         alert.setHeaderText("تسجيل الخروج");
         alert.setContentText("هل أنت متأكد من رغبتك في تسجيل الخروج ؟");
 
-        if (alert.showAndWait().get() == ButtonType.OK) {
+        if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
             SessionManager session = SessionManager.getInstance();
             session.destroySession();
 
-            try {
-                Stage stage = (Stage) dossierNumberLabel.getScene().getWindow();
-                FXMLLoader loader = new FXMLLoader(
-                        getClass().getResource("/com/DRJ/dossierexpert/views/pages/login.fxml")
-                );
-                Scene scene = new Scene(loader.load());
-                stage.setTitle("خبير الملفات - تسجيل الدخول");
-                stage.setScene(scene);
-                stage.setMaximized(false);
-                stage.setResizable(false);
-                stage.show();
-                System.out.println("✅ Déconnexion réussie");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Stage stage = (Stage) dossierNumberLabel.getScene().getWindow();
+            MainApplication.logoutAndExit(stage);
+            System.out.println("✅ Déconnexion réussie");
         }
     }
 

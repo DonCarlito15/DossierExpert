@@ -1,5 +1,6 @@
 package com.DRJ.dossierexpert.controller;
 
+import com.DRJ.dossierexpert.MainApplication;
 import com.DRJ.dossierexpert.model.Dossier;
 import com.DRJ.dossierexpert.service.DossierService;
 import com.DRJ.dossierexpert.utils.SessionManager;
@@ -285,24 +286,12 @@ public class SearchController implements Initializable {
         alert.setHeaderText("تسجيل الخروج");
         alert.setContentText("هل أنت متأكد de vouloir vous déconnecter ?");
 
-        if (alert.showAndWait().get() == ButtonType.OK) {
+        if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
             SessionManager session = SessionManager.getInstance();
             session.destroySession();
 
-            try {
-                Stage stage = (Stage) searchField.getScene().getWindow();
-                FXMLLoader loader = new FXMLLoader(
-                        getClass().getResource("/com/DRJ/dossierexpert/views/pages/login.fxml")
-                );
-                Scene scene = new Scene(loader.load());
-                stage.setTitle("خبير الملفات - تسجيل الدخول");
-                stage.setScene(scene);
-                stage.setMaximized(false);
-                stage.setResizable(false);
-                stage.show();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Stage stage = (Stage) searchField.getScene().getWindow();
+            MainApplication.logoutAndExit(stage);
         }
     }
 

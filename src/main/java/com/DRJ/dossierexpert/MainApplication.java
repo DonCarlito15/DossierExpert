@@ -2,6 +2,7 @@ package com.DRJ.dossierexpert;
 
 import javafx.animation.FadeTransition;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -109,6 +110,17 @@ public class MainApplication extends Application {
             primaryStage.close();
         }
         System.exit(0);
+    }
+
+    public static void logoutAndExit(Stage stage) {
+        try {
+            if (stage != null) {
+                stage.close();
+            }
+        } finally {
+            Platform.exit();
+            System.exit(0);
+        }
     }
 
     public static void main(String[] args) {

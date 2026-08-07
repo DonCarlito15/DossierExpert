@@ -1,5 +1,6 @@
 package com.DRJ.dossierexpert.controller;
 
+import com.DRJ.dossierexpert.MainApplication;
 import com.DRJ.dossierexpert.utils.SessionManager;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -158,26 +159,14 @@ public class MainLayoutController implements Initializable {
         alert.setHeaderText("تسجيل الخروج");
         alert.setContentText("هل أنت متأكد من رغبتك في تسجيل الخروج ؟");
 
-        if (alert.showAndWait().get() == ButtonType.OK) {
+        if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
             SessionManager session = SessionManager.getInstance();
             session.destroySession();
             System.out.println("✅ Session détruite");
 
-            try {
-                Stage stage = (Stage) mainLayout.getScene().getWindow();
-                FXMLLoader loader = new FXMLLoader(
-                        getClass().getResource("/com/DRJ/dossierexpert/views/pages/login.fxml")
-                );
-                Scene scene = new Scene(loader.load());
-                stage.setTitle("خبير الملفات - تسجيل الدخول");
-                stage.setScene(scene);
-                stage.setMaximized(false);
-                stage.setResizable(false);
-                stage.show();
-                LOGGER.info("Déconnexion réussie");
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "Erreur lors du retour à la page de connexion", e);
-            }
+            Stage stage = (Stage) mainLayout.getScene().getWindow();
+            MainApplication.logoutAndExit(stage);
+            LOGGER.info("Déconnexion réussie");
         }
     }
 

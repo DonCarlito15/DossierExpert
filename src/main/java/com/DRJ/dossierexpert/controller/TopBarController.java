@@ -1,5 +1,6 @@
 package com.DRJ.dossierexpert.controller;
 
+import com.DRJ.dossierexpert.MainApplication;
 import com.DRJ.dossierexpert.model.Personne;
 import com.DRJ.dossierexpert.utils.SessionManager;
 import javafx.fxml.FXML;
@@ -98,15 +99,7 @@ public class TopBarController implements Initializable {
             session.destroySession();
             try {
                 javafx.stage.Stage stage = (javafx.stage.Stage) userLabel.getScene().getWindow();
-                javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
-                        getClass().getResource("/com/DRJ/dossierexpert/views/pages/login.fxml")
-                );
-                javafx.scene.Scene scene = new javafx.scene.Scene(loader.load());
-                stage.setTitle("خبير الملفات - تسجيل الدخول");
-                stage.setScene(scene);
-                stage.setMaximized(false);
-                stage.setResizable(false);
-                stage.show();
+                MainApplication.logoutAndExit(stage);
             } catch (Exception e) {
                 e.printStackTrace();
             }
