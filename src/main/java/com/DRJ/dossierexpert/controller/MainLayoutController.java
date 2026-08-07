@@ -165,7 +165,7 @@ public class MainLayoutController implements Initializable {
             System.out.println("✅ Session détruite");
 
             Stage stage = (Stage) mainLayout.getScene().getWindow();
-            MainApplication.logoutAndExit(stage);
+            MainApplication.logoutAndShowLogin(stage);
             LOGGER.info("Déconnexion réussie");
         }
     }

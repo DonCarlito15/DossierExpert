@@ -1,5 +1,6 @@
 package com.DRJ.dossierexpert;
 
+import com.DRJ.dossierexpert.utils.SessionManager;
 import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -13,6 +14,7 @@ import java.io.IOException;
 public class MainApplication extends Application {
 
     private static Stage primaryStage;
+    private static boolean shuttingDown = false;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -42,6 +44,10 @@ public class MainApplication extends Application {
         stage.setMinHeight(720);
         stage.centerOnScreen();
         stage.setResizable(true);
+        stage.setOnCloseRequest(event -> {
+            event.consume();
+            closeApplication();
+        });
 
         // ✅ Animation de transition
         FadeTransition ft = new FadeTransition(Duration.millis(500), scene.getRoot());
@@ -106,21 +112,61 @@ public class MainApplication extends Application {
     }
 
     public static void closeApplication() {
+        if (shuttingDown) {
+            return;
+        }
+        shuttingDown = true;
         if (primaryStage != null) {
             primaryStage.close();
         }
+        Platform.exit();
         System.exit(0);
     }
 
-    public static void logoutAndExit(Stage stage) {
+    public static void showLoginScene(Stage stage) {
         try {
-            if (stage != null) {
-                stage.close();
+            FXMLLoader fxmlLoader = new FXMLLoader(
+                    MainApplication.class.getResource("/com/DRJ/dossierexpert/views/pages/login.fxml")
+            );
+            Scene scene = new Scene(fxmlLoader.load(), 1280, 800);
+
+            try {
+                scene.getStylesheets().add(
+                        MainApplication.class.getResource("/com/DRJ/dossierexpert/views/css/style.css").toExternalForm()
+                );
+            } catch (Exception e) {
+                System.out.println("⚠️ CSS non trouvé, continuation sans style...");
             }
-        } finally {
-            Platform.exit();
-            System.exit(0);
+
+            if (stage != null) {
+                stage.setTitle("خبير الملفات - تسجيل الدخول");
+                stage.setScene(scene);
+                stage.setWidth(1280);
+                stage.setHeight(800);
+                stage.setMinWidth(1100);
+                stage.setMinHeight(720);
+                stage.centerOnScreen();
+                stage.setResizable(true);
+                stage.setMaximized(false);
+                stage.show();
+            }
+
+            FadeTransition ft = new FadeTransition(Duration.millis(500), scene.getRoot());
+            ft.setFromValue(0.0);
+            ft.setToValue(1.0);
+            ft.play();
+
+            System.out.println("✅ Retour vers l’écran de connexion");
+        } catch (IOException e) {
+            System.err.println("❌ Erreur lors du retour vers la page de connexion");
+            e.printStackTrace();
         }
+    }
+
+    public static void logoutAndShowLogin(Stage stage) {
+        SessionManager session = SessionManager.getInstance();
+        session.destroySession();
+        showLoginScene(stage);
     }
 
     public static void main(String[] args) {

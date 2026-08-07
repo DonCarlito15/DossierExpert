@@ -7,7 +7,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -24,6 +26,7 @@ public class LoginController implements Initializable {
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
     @FXML private Button loginButton;
+    @FXML private Button closeButton;
     @FXML private Label errorLabel;
 
     private AuthentificationService authService;
@@ -53,6 +56,18 @@ public class LoginController implements Initializable {
                 handleLogin();
             }
         });
+    }
+
+    @FXML
+    private void handleClose() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Fermer l’application");
+        alert.setHeaderText(null);
+        alert.setContentText("Voulez-vous vraiment quitter ?");
+
+        if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+            com.DRJ.dossierexpert.MainApplication.closeApplication();
+        }
     }
 
     @FXML

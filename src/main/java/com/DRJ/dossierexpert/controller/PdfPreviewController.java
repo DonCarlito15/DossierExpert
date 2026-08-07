@@ -456,7 +456,7 @@ public class PdfPreviewController implements Initializable {
             session.destroySession();
 
             Stage stage = (Stage) dossierNumberLabel.getScene().getWindow();
-            MainApplication.logoutAndExit(stage);
+            MainApplication.logoutAndShowLogin(stage);
             System.out.println("✅ Déconnexion réussie");
         }
     }

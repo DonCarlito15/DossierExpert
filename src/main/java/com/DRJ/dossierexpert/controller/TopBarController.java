@@ -99,7 +99,7 @@ public class TopBarController implements Initializable {
             session.destroySession();
             try {
                 javafx.stage.Stage stage = (javafx.stage.Stage) userLabel.getScene().getWindow();
-                MainApplication.logoutAndExit(stage);
+                MainApplication.logoutAndShowLogin(stage);
             } catch (Exception e) {
                 e.printStackTrace();
             }

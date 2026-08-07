@@ -291,7 +291,7 @@ public class SearchController implements Initializable {
             session.destroySession();
 
             Stage stage = (Stage) searchField.getScene().getWindow();
-            MainApplication.logoutAndExit(stage);
+            MainApplication.logoutAndShowLogin(stage);
         }
     }
 
